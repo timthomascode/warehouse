@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: Ware 1
+  description: First wares fixture
+  price: 9.99
+
+two:
+  name: Ware 2
+  description: Second wares fixture, max price due to precision: 5 in db schema
+  price: 999.99
