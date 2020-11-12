@@ -17,7 +17,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
 
     # create
     assert_difference('Ware.count', 0) do
-      post wares_url, params: { ware: { description: @ware.description, name: @ware.name, price: @ware.price } } 
+      post wares_url, params: { ware: { description: @ware.description, name: @ware.name, price_cents: @ware.price_cents } } 
     end
  
     # show
@@ -29,7 +29,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_admin_session_url
 
     # update
-    patch ware_url(@ware), params: { ware: { description: "Test", name: @ware.name, price: @ware.price } }
+    patch ware_url(@ware), params: { ware: { description: "Test", name: @ware.name, price_cents: @ware.price_cents } }
     assert_redirected_to new_admin_session_url
 
     # delete
@@ -54,7 +54,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
   test "should create ware" do
     sign_in admins(:one)
     assert_difference('Ware.count') do
-      post wares_url, params: { ware: { description: @ware.description, name: @ware.name, price: @ware.price } }
+      post wares_url, params: { ware: { description: @ware.description, name: @ware.name, price_cents: @ware.price_cents } }
     end
 
     assert_redirected_to ware_url(Ware.last)
@@ -74,7 +74,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
 
   test "should update ware" do
     sign_in admins(:one)
-    patch ware_url(@ware), params: { ware: { description: @ware.description, name: @ware.name, price: @ware.price } }
+    patch ware_url(@ware), params: { ware: { description: @ware.description, name: @ware.name, price_cents: @ware.price_cents } }
     assert_redirected_to ware_url(@ware)
   end
 

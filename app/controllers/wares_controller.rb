@@ -70,6 +70,6 @@ class WaresController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def ware_params
-      params.require(:ware).permit(:name, :description, :price)
+      params.require(:ware).permit(:name, :description, :price_cents)
     end
 end

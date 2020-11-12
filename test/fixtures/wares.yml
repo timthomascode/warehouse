@@ -3,9 +3,9 @@
 one:
   name: Ware 1
   description: First wares fixture
-  price: 9.99
+  price_cents: 999
 
 two:
   name: Ware 2
-  description: Second wares fixture, max price due to precision: 5 in db schema
-  price: 999.99
+  description: Second wares fixture
+  price_cents: 99999

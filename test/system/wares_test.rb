@@ -19,7 +19,7 @@ class WaresTest < ApplicationSystemTestCase
 
     fill_in "Description", with: @ware.description
     fill_in "Name", with: @ware.name
-    fill_in "Price", with: @ware.price
+    fill_in "Price", with: @ware.price_cents
     click_on "Create Ware"
 
     assert_text "Ware was successfully created"
@@ -32,7 +32,7 @@ class WaresTest < ApplicationSystemTestCase
 
     fill_in "Description", with: @ware.description
     fill_in "Name", with: @ware.name
-    fill_in "Price", with: @ware.price
+    fill_in "Price", with: @ware.price_cents
     click_on "Update Ware"
 
     assert_text "Ware was successfully updated"
