@@ -15,7 +15,7 @@ class WaresTest < ApplicationSystemTestCase
 
   test "creating a Ware" do
     visit wares_url
-    click_on "New Ware"
+    click_on "Sell Something"
 
     fill_in "Description", with: @ware.description
     fill_in "Name", with: @ware.name
