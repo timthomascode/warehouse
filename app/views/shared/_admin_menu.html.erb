@@ -1,0 +1,13 @@
+<% if admin_signed_in? %>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <%= link_to 'Store', warehouse_index_path, class: "nav-link" %>
+    </li>
+    <li class="nav-item">
+      <%= link_to 'Ware Management', wares_path, class: "nav-link" %>
+    </li>
+    <li class="nav-item">
+      <%= link_to 'Logout', destroy_admin_session_path, method: :delete, class: "nav-link" %>
+    </li>
+  </ul>
+<% end %>
