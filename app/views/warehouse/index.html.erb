@@ -1,10 +1,15 @@
 <h1>Warehouse</h1>
+<% if notice %>
+  <div class="alert alert-danger" role="alert">
+    <%= notice %>
+  </div>
+<% end %>
 <% @wares.each do |ware| %>
   <p>
     <%= ware.name %>
     <%= ware.description %>
     <%= ware.price %>
-    <%= link_to "Buy now" %>
+    <%= button_to "Buy now", controller: 'wares', action: 'process_ware', ware_id: ware.id %>
   </p>
 <% end %>
 

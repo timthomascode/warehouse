@@ -1,6 +1,6 @@
 class WaresController < ApplicationController
   before_action :set_ware, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_admin!
+  before_action :authenticate_admin!, except: [ :process_ware ]
 
   # GET /wares
   # GET /wares.json
@@ -59,6 +59,18 @@ class WaresController < ApplicationController
     respond_to do |format|
       format.html { redirect_to wares_url, notice: 'Ware was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def process_ware
+    ware = Ware.find(params[:ware_id])
+    if ware.status == "available"
+      ware.update!(status: :processing)
+      session[:processed_ware] = ware.id
+      redirect_to new_order_url
+    else
+      session[:processed_ware] = nil
+      redirect_to warehouse_index_url, notice: "Item no longer available."
     end
   end
 

@@ -6,6 +6,21 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
     @ware = wares(:one)
   end
 
+  test 'process_ware' do
+    post "/process_ware/#{@ware.id}"
+    ware = Ware.find(@ware.id)
+    assert_equal "processing", ware.status
+    assert_equal ware.id, session[:processed_ware]
+    assert_redirected_to new_order_url
+  end
+
+  test "process_ware can't be called on processing and sold wares" do
+    @ware.update(status: :processing)
+    post "/process_ware/#{@ware.id}"
+    assert_nil session[:processed_ware]
+    assert_redirected_to warehouse_index_url 
+  end
+
   test "prevents unauthorized access" do
     # index
     get wares_url
