@@ -15,5 +15,10 @@ module Warehouse
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+    
+    # Stripe test keys for development and test environments, production keys in 
+    # config/environments/production.rb.
+    config.stripe.secret_key = Rails.application.credentials.stripe[:development][:secret_key]
+    config.stripe.publishable_key = Rails.application.credentials.stripe[:development][:publishable_key]
   end
 end

@@ -33,6 +33,7 @@ gem 'devise'
 
 # Use Stripe gem for payments
 gem 'stripe'
+gem 'stripe-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
