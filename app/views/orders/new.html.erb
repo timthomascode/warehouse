@@ -1,5 +1,6 @@
 <h1>New Order</h1>
+<%= @ware.inspect %>
 
 <%= render 'form', order: @order %>
 
-<%= link_to 'Back', orders_path %>
+<%= link_to 'Back', warehouse_index_path %>

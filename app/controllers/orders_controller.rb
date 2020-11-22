@@ -15,6 +15,7 @@ class OrdersController < ApplicationController
 
   # GET /orders/new
   def new
+    @ware = Ware.find(session[:processed_ware])
     @order = Order.new
   end
 
