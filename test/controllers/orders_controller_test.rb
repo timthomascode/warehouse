@@ -17,6 +17,11 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "create_checkout_session" do
+    post "/create_checkout_session"
+    assert_response :success
+  end
+
   test "should get new" do
     get new_order_url
     assert_response :success

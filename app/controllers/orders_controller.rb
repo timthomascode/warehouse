@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :edit, :destroy]
-  before_action :authenticate_admin!, except: [:new, :create]
+  before_action :authenticate_admin!, except: [:new, :create, :create_checkout_session ]
 
   # GET /orders
   # GET /orders.json
@@ -51,6 +51,31 @@ class OrdersController < ApplicationController
       format.html { redirect_to orders_url, notice: 'Order was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def create_checkout_session
+    session = Stripe::Checkout::Session.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'T-shirt',
+          },
+          unit_amount: 2000,
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      # For now leave these URLs as placeholder values.
+      #
+      # Later on in the guide, you'll create a real success page, but no need to
+      # do it yet.
+      success_url: 'http://localhost:3000/success',
+      cancel_url: 'http://localhost:3000/cancel',
+    })
+
+    render json: { id: session.id }
   end
 
   private
