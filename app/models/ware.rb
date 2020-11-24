@@ -1,7 +1,7 @@
 class Ware < ApplicationRecord
   include ActionView::Helpers
   validates :name, :description, :price_cents, presence: true
-  belongs_to :order, optional: true
+  has_one :order
 
   enum status: { available: "available", processing: "processing", sold: "sold" }
 

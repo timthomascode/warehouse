@@ -1,0 +1,20 @@
+<h1>Review Order</h1>
+<%= @order.inspect %>
+
+<script src="https://js.stripe.com/v3/"></script>
+<button id="pay-button">Pay</button>
+<script type="text/javascript">
+  var stripe = Stripe("<%= Rails.application.credentials.stripe[:development][:publishable_key] %>");
+  var payButton = document.getElementById('pay-button');
+  payButton.addEventListener('click', function() {
+    stripe.redirectToCheckout({ sessionId: "<%= @order.checkout_session %>" })
+    .then(function(result) {
+      if (result.error) {
+        alert(result.error.message);
+      }
+    })
+    .catch(function(error) {
+      console.error("Error: ${error}");
+    });
+  });
+</script>

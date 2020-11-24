@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   end
 
   post 'process_ware/:ware_id', to: 'wares#process_ware'
-  post '/create_checkout_session', to: 'orders#create_checkout_session'
+  get '/pay', to: 'orders#pay', as: 'orders_pay'
+  get '/success', to: 'orders#success'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

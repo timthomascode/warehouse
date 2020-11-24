@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :edit, :destroy]
-  before_action :authenticate_admin!, except: [:new, :create, :create_checkout_session ]
+  before_action :authenticate_admin!, except: [:new, :create, :create_checkout_session, :pay, :success]
 
   # GET /orders
   # GET /orders.json
@@ -24,21 +24,18 @@ class OrdersController < ApplicationController
   end
 
   # POST /orders
-  # POST /orders.json
   def create
-    ware = Ware.find(session[:processed_ware])
     @order = Order.new(order_params)
-    @order.ware_id = ware.id
+    @order.ware_id = session[:processed_ware]
+    @order.checkout_session = create_checkout_session(@order)
+    @order.paid = false
 
     respond_to do |format|
       if @order.save
-        ware.update!(status: :sold)
-        session[:processed_ware] = nil
-        format.html { redirect_to warehouse_index_path, notice: 'Order was successfully created.' }
-        format.json { render :show, status: :created, location: @order }
+        session[:order_id] = @order.id
+        format.html { redirect_to orders_pay_path }
       else
         format.html { render :new }
-        format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -53,32 +50,48 @@ class OrdersController < ApplicationController
     end
   end
 
-  def create_checkout_session
-    session = Stripe::Checkout::Session.create({
-      payment_method_types: ['card'],
-      line_items: [{
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'T-shirt',
-          },
-          unit_amount: 2000,
-        },
-        quantity: 1,
-      }],
-      mode: 'payment',
-      # For now leave these URLs as placeholder values.
-      #
-      # Later on in the guide, you'll create a real success page, but no need to
-      # do it yet.
-      success_url: 'http://localhost:3000/success',
-      cancel_url: 'http://localhost:3000/cancel',
-    })
-
-    render json: { id: session.id }
+  def pay
+    @order = Order.find(session[:order_id])
   end
 
+  def success
+    @order = Order.find(session[:order_id])
+    @checkout_session = Stripe::Checkout::Session.retrieve(@order.checkout_session)
+    ware = @order.ware
+    @order.update!(paid: true)
+    ware.update!(status: :sold)
+    # email customer receipt
+    # email self invoice copy
+    session[:order_id] = nil
+    session[:processed_ware] = nil
+  end  
+
   private
+
+    def create_checkout_session(order) 
+      checkout_session = Stripe::Checkout::Session.create({
+        customer_email: order.email,
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: order.ware.name,
+              description: order.ware.description,
+            },
+            unit_amount: order.ware.price_cents,
+          },
+          quantity: 1,
+        }],
+        mode: 'payment',
+        success_url: "http://localhost:3000/success",
+        cancel_url: 'http://localhost:3000/cancel',
+      })
+
+      return checkout_session.id
+      
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_order
       @order = Order.find(params[:id])
