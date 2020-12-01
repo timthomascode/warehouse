@@ -26,7 +26,7 @@ class WaresController < ApplicationController
   # POST /wares.json
   def create
     @ware = Ware.new(ware_params)
-
+    @ware.status = :available 
     respond_to do |format|
       if @ware.save
         format.html { redirect_to @ware, notice: 'Ware was successfully created.' }
@@ -82,6 +82,6 @@ class WaresController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def ware_params
-      params.require(:ware).permit(:name, :description, :price_cents)
+      params.require(:ware).permit(:name, :description, :price_cents, :image)
     end
 end

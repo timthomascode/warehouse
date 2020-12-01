@@ -1,9 +1,29 @@
 require 'test_helper'
 
+# Callback to remove uploaded test files from local storage
+module RemoveUploadedFiles
+  def after_teardown
+    super
+    remove_uploaded_files
+  end
+
+  private
+
+  def remove_uploaded_files
+    FileUtils.rm_rf(Rails.root.join('tmp','storage'))
+  end
+end
+
+module ActionDispatch
+  class IntegrationTest
+    prepend RemoveUploadedFiles
+  end
+end
+
 class WaresControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
   setup do
-    @ware = wares(:one)
+    @ware = wares(:magical_amulet)
   end
 
   test 'process_ware' do
@@ -69,7 +89,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
   test "should create ware" do
     sign_in admins(:one)
     assert_difference('Ware.count') do
-      post wares_url, params: { ware: { description: @ware.description, name: @ware.name, price_cents: @ware.price_cents } }
+      post wares_url, params: { ware: { description: "A bronze sword. 24 inches long. Dark leather handle. No guard, Ruby pommel.", name: "Sword", price_cents: 40000, image: fixture_file_upload('app/assets/images/test.png', 'image/png') } }
     end
 
     assert_redirected_to ware_url(Ware.last)
@@ -96,7 +116,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
   test "should destroy ware" do
     sign_in admins(:one)
     assert_difference('Ware.count', -1) do
-      delete ware_url(@ware)
+      delete ware_url(wares(:silver_ring))
     end
 
     assert_redirected_to wares_url

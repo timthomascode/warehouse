@@ -5,6 +5,6 @@ class WarehouseController < ApplicationController
       ware.update!(status: :available) unless ware.status == :sold
       session[:processed_ware] = nil
     end
-    @wares = Ware.where(status: :available)
+    @wares = Ware.where(status: :available).order(:price_cents)
   end
 end

@@ -17,23 +17,19 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "create_checkout_session" do
-    post "/create_checkout_session"
-    assert_response :success
-  end
-
   test "should get new" do
+    post "/process_ware/#{ wares(:magical_amulet).id }"
     get new_order_url
     assert_response :success
   end
 
   test "should create order" do
     assert_difference('Order.count') do
-      post "/process_ware/#{ wares(:one).id }"
+      post "/process_ware/#{ wares(:silver_ring).id }"
       post orders_url, params: { order: { apt_num: @order.apt_num, city: @order.city, email: @order.email, first_name: @order.first_name, last_name: @order.last_name, state: @order.state, street_address: @order.street_address, zip_code: @order.zip_code } }
     end
 
-    assert_redirected_to warehouse_index_url 
+    assert_redirected_to orders_pay_url 
   end
 
   test "should show order" do
