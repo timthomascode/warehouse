@@ -8,7 +8,7 @@
   <% @wares.each do |ware| %>
     <div class="ware p-3 col-sm-4 text-center">
       <% if ware.image.attached? %>
-        <%= image_tag ware.image.variant(resize_to_limit: [200, 200]) %>
+        <%= image_tag ware.image.variant(resize_to_limit: [200, 200]), class: "img-fluid" %>
       <% end %>
       <div class="name"><%= ware.name %></div>
       <div class="description"><%= ware.description %></div>
