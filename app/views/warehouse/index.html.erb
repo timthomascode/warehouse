@@ -4,12 +4,16 @@
     <%= notice %>
   </div>
 <% end %>
-<% @wares.each do |ware| %>
-  <p>
-    <%= ware.name %>
-    <%= ware.description %>
-    <%= ware.price %>
-    <%= button_to "Buy now", controller: 'wares', action: 'process_ware', ware_id: ware.id %>
-  </p>
-<% end %>
-
+<div class="row">
+  <% @wares.each do |ware| %>
+    <div class="ware p-3 col-sm-4 text-center">
+      <% if ware.image.attached? %>
+        <%= image_tag ware.image.variant(resize_to_limit: [200, 200]) %>
+      <% end %>
+      <div class="name"><%= ware.name %></div>
+      <div class="description"><%= ware.description %></div>
+      <div class="price"><%= ware.price %></div>
+      <%= button_to "Buy now", { controller: 'wares', action: 'process_ware', ware_id: ware.id },  class: "buy-now"  %>
+    </div>
+  <% end %>
+</div>

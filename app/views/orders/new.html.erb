@@ -3,4 +3,4 @@
 
 <%= render 'form', order: @order %>
 
-<%= link_to 'Store Home', warehouse_index_path %>
+<%= link_to 'Store Home', warehouse_index_path, data: { confirm: "Leaving this page will cancel your order and return #{ @ware.name } to the storefront" } %>

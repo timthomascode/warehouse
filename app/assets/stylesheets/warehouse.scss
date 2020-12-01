@@ -1,3 +1,21 @@
 // Place all the styles related to the Warehouse controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+.ware {
+  .name {
+    font-size: 1.5em;
+    line-height: 1.2em;
+    font-weight: bold;
+    padding: 5px;
+  }
+  .description {
+  }
+  .price {
+    font-size: 1.5em;
+    margin-top: 15px;
+  }
+  input.buy-now {
+    margin-top: 5px;
+  }
+}
+
