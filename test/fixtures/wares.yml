@@ -4,7 +4,7 @@ magical_amulet:
   name: Magical Amulet
   description: A magical amulet, believed to give good luck.
   price_cents: 99999
-  status: available
+  status: sold
 
 silver_ring:
   name: Silver Ring

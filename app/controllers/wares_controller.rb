@@ -55,16 +55,17 @@ class WaresController < ApplicationController
   # DELETE /wares/1
   # DELETE /wares/1.json
   def destroy
-    @ware.destroy
-    respond_to do |format|
-      format.html { redirect_to wares_url, notice: 'Ware was successfully destroyed.' }
-      format.json { head :no_content }
+    if @ware.available?
+      @ware.destroy
+      redirect_to wares_url, notice: 'Ware was successfully destroyed.'
+    else
+      redirect_to wares_url, notice: "Ware cannot be deleted."
     end
   end
 
   def process_ware
     ware = Ware.find(params[:ware_id])
-    if ware.status == "available"
+    if ware.available?
       ware.update!(status: :processing)
       session[:processed_ware] = ware.id
       redirect_to new_order_url

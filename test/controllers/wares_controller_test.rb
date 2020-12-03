@@ -128,12 +128,22 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to ware_url(@ware)
   end
 
-  test "should destroy ware" do
+  test "should destroy available ware" do
     sign_in admins(:one)
     assert_difference('Ware.count', -1) do
       delete ware_url(wares(:silver_ring))
     end
 
     assert_redirected_to wares_url
+    assert_equal @controller.notice, "Ware was successfully destroyed."
+  end
+
+  test "should not destroy sold and processing wares" do
+    sign_in admins(:one)
+    assert_difference('Ware.count', 0) do
+      delete ware_url(wares(:magical_amulet)) 
+    end
+
+    assert_equal @controller.notice, "Ware cannot be deleted."
   end
 end
