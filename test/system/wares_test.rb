@@ -4,13 +4,13 @@ class WaresTest < ApplicationSystemTestCase
   include Devise::Test::IntegrationHelpers
 
   setup do
-    @ware = wares(:one)
+    @ware = wares(:magical_amulet)
     sign_in admins(:one)
   end
 
   test "visiting the index" do
     visit wares_url
-    assert_selector "h1", text: "Wares"
+    assert_selector "h3", text: "Wares"
   end
 
   test "creating a Ware" do
@@ -20,6 +20,7 @@ class WaresTest < ApplicationSystemTestCase
     fill_in "Description", with: @ware.description
     fill_in "Name", with: @ware.name
     fill_in "Price", with: @ware.price_cents
+    attach_file "Image", "app/assets/images/test.png"
     click_on "Create Ware"
 
     assert_text "Ware was successfully created"
@@ -30,9 +31,9 @@ class WaresTest < ApplicationSystemTestCase
     visit wares_url
     click_on "Edit", match: :first
 
-    fill_in "Description", with: @ware.description
-    fill_in "Name", with: @ware.name
-    fill_in "Price", with: @ware.price_cents
+    fill_in "Description", with: "Updated description"
+    fill_in "Name", with: "Updated Name"
+    fill_in "Price", with: 1500
     click_on "Update Ware"
 
     assert_text "Ware was successfully updated"
@@ -41,8 +42,9 @@ class WaresTest < ApplicationSystemTestCase
 
   test "destroying a Ware" do
     visit wares_url
+    silver_ring_id = wares(:silver_ring).id
     page.accept_confirm do
-      click_on "Destroy", match: :first
+      find_by_id("#{ silver_ring_id }").click_on "Destroy"
     end
 
     assert_text "Ware was successfully destroyed"

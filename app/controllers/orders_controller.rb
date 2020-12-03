@@ -28,7 +28,6 @@ class OrdersController < ApplicationController
     @order = Order.new(order_params)
     @order.ware_id = session[:processed_ware]
     @order.checkout_session = create_checkout_session(@order)
-    @order.paid = false
 
     respond_to do |format|
       if @order.save

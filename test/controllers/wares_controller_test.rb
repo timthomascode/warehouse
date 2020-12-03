@@ -4,13 +4,28 @@ require 'test_helper'
 module RemoveUploadedFiles
   def after_teardown
     super
+    move_test_image_blob
     remove_uploaded_files
+    rebuild_test_image_blob_folders
+    move_test_image_blob_back
   end
 
   private
 
+  def move_test_image_blob
+    FileUtils.move 'tmp/storage/12/34/123456789', 'tmp/'
+  end
+
+  def rebuild_test_image_blob_folders
+    FileUtils.makedirs 'tmp/storage/12/34'
+  end
+  
   def remove_uploaded_files
-    FileUtils.rm_rf(Rails.root.join('tmp','storage'))
+    FileUtils.rm_rf 'tmp/storage'
+  end
+  
+  def move_test_image_blob_back
+    FileUtils.move 'tmp/123456789', 'tmp/storage/12/34'
   end
 end
 

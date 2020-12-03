@@ -14,7 +14,7 @@
 
   <tbody>
     <% @wares.each do |ware| %>
-      <tr>
+      <tr id="<%= ware.id %>">
         <td><%= ware.name %></td>
         <td><%= ware.description %></td>
         <td><%= ware.price %></td>

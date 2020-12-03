@@ -1,7 +1,7 @@
 test_image_blob:
   key: 123456789
-  filename: test_image.png
+  filename: test.png
   content_type: image/png
   metadata: '{"identified":true,"analyzed":true}'
-  byte_size: 1000
-  checksum: 123456
+  byte_size: <%= File.size('tmp/storage/12/34/123456789') %>
+  checksum: <%= Digest::MD5.file('tmp/storage/12/34/123456789').base64digest %>

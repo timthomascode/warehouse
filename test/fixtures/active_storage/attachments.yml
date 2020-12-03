@@ -1,9 +1,9 @@
-test_image:
+magical_amulet:
   name: image
   record: magical_amulet (Ware)
   blob: test_image_blob
 
-ring_image:
+silver_ring:
   name: image
   record: silver_ring (Ware)
   blob: test_image_blob

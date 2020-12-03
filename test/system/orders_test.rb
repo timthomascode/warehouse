@@ -10,7 +10,7 @@ class OrdersTest < ApplicationSystemTestCase
   test "visiting the index" do
     sign_in @admin
     visit orders_url
-    assert_selector "h1", text: "Orders"
+    assert_selector "h3", text: "Orders"
   end
 
   test "successful order & payment flow" do
@@ -31,7 +31,7 @@ class OrdersTest < ApplicationSystemTestCase
     assert_text "Review Order"
     click_on "Pay"
 
-    assert_text "test@example.com"
+    assert_text "test@example.com", wait: 5
     fill_in "cardNumber", with: "4242424242424242"
     fill_in "cardExpiry", with: "424"
     fill_in "cardCvc", with: "424"
