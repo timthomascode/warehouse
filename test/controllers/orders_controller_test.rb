@@ -18,7 +18,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get new" do
-    post "/process_ware/#{ wares(:magical_amulet).id }"
+    post "/process_ware/#{ wares(:silver_ring).id }"
     get new_order_url
     assert_response :success
   end

@@ -29,13 +29,11 @@ class OrdersController < ApplicationController
     @order.ware_id = session[:processed_ware]
     @order.checkout_session = create_checkout_session(@order)
 
-    respond_to do |format|
-      if @order.save
-        session[:order_id] = @order.id
-        format.html { redirect_to orders_pay_path }
-      else
-        format.html { render :new }
-      end
+    if @order.save
+      session[:order_id] = @order.id
+      redirect_to orders_pay_url
+    else
+      redirect_to new_order_url 
     end
   end
 

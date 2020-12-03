@@ -38,7 +38,7 @@ end
 class WaresControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
   setup do
-    @ware = wares(:magical_amulet)
+    @ware = wares(:silver_ring)
   end
 
   test 'process_ware' do

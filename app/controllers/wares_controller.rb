@@ -26,7 +26,7 @@ class WaresController < ApplicationController
   # POST /wares.json
   def create
     @ware = Ware.new(ware_params)
-    @ware.status = :available 
+
     respond_to do |format|
       if @ware.save
         format.html { redirect_to @ware, notice: 'Ware was successfully created.' }
