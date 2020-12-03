@@ -31,7 +31,6 @@ class OrdersController < ApplicationController
 
     if @order.save
       session[:order_id] = @order.id
-      redirect_to orders_pay_url
     else
       redirect_to new_order_url 
     end
@@ -47,23 +46,35 @@ class OrdersController < ApplicationController
     end
   end
 
-  def pay
-    @order = Order.find(session[:order_id])
-  end
-
   def success
-    @order = Order.find(session[:order_id])
+    @order = get_order_from_session
     @checkout_session = Stripe::Checkout::Session.retrieve(@order.checkout_session)
     ware = @order.ware
     @order.update!(paid: true)
     ware.update!(status: :sold)
-    # email customer receipt
-    # email self invoice copy
-    session[:order_id] = nil
+    #TODO email customer receipt
+    #TODO email self invoice copy
+    reset_session_order_id
     session[:processed_ware] = nil
   end  
 
+  def cancel
+    @order = get_order_from_session
+    @ware = @order.ware
+    @order.delete
+    @order = Order.new
+    reset_session_order_id
+    render :new
+  end
+
   private
+    
+    def reset_session_order_id
+      session[:order_id] = nil
+    end
+    def get_order_from_session
+      Order.find(session[:order_id])
+    end
 
     def create_checkout_session(order) 
       checkout_session = Stripe::Checkout::Session.create({

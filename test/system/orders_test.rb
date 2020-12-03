@@ -26,10 +26,7 @@ class OrdersTest < ApplicationSystemTestCase
     fill_in "State", with: "System Test"
     fill_in "Zip code", with: "12345"
     fill_in "Email", with: "test@example.com"
-    click_on "Confirm Order"
-
-    assert_text "Review Order"
-    click_on "Pay"
+    click_on "Continue to Payment"
 
     assert_text "test@example.com", wait: 5
     fill_in "cardNumber", with: "4242424242424242"
