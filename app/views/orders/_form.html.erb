@@ -1,5 +1,5 @@
 <div class="row border rounded-sm p-3">
-  <%= form_with(model: order, local: true, class: "col-12") do |form| %>
+  <%= form_with(model: order, local: true, class: "col-12 p-0") do |form| %>
     <% if order.errors.any? %>
       <div id="error_explanation">
         <h2><%= pluralize(order.errors.count, "error") %> prohibited this order from being saved:</h2>
