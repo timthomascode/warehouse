@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :edit, :destroy]
-  before_action :authenticate_admin!, except: [:new, :create, :create_checkout_session, :pay, :success]
+  before_action :authenticate_admin!, except: [:new, :create, :create_checkout_session, :success, :cancel ]
 
   # GET /orders
   # GET /orders.json
@@ -47,22 +47,28 @@ class OrdersController < ApplicationController
   end
 
   def success
-    @order = Order.find(session[:order_id])
-    @ware = @order.ware
-    @order.update!(paid: true)
-    @ware.update!(status: :sold)
-    #TODO email customer receipt
-    #TODO email self invoice copy
-    session[:order_id] = nil
-    session[:processed_ware] = nil
+    if session[:order_id]
+      @order = Order.find(session[:order_id])
+      @ware = @order.ware
+      @order.update!(paid: true)
+      @ware.update!(status: :sold)
+      #TODO email customer receipt
+      #TODO email self invoice copy
+      session[:order_id] = nil
+      session[:processed_ware] = nil
+    else
+      redirect_to root_url
+    end
   end  
 
   def cancel
-    @order = Order.find(session[:order_id])
-    @ware = @order.ware
-    @order.delete
-    @order = Order.new
-    session[:order_id] = nil
+    if session[:order_id]
+      @order = Order.find(session[:order_id])
+      @ware = @order.ware
+      @order.delete
+      @order = Order.new
+      session[:order_id] = nil
+    end
     redirect_to new_order_url
   end
 
