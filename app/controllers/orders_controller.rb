@@ -64,7 +64,7 @@ class OrdersController < ApplicationController
     @order.delete
     @order = Order.new
     reset_session_order_id
-    render :new
+    redirect_to new_order_url
   end
 
   private
@@ -72,6 +72,7 @@ class OrdersController < ApplicationController
     def reset_session_order_id
       session[:order_id] = nil
     end
+
     def get_order_from_session
       Order.find(session[:order_id])
     end
@@ -86,6 +87,7 @@ class OrdersController < ApplicationController
             product_data: {
               name: order.ware.name,
               description: order.ware.description,
+              # images: [url_for(order.ware.image)],
             },
             unit_amount: order.ware.price_cents,
           },
