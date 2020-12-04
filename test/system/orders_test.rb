@@ -14,10 +14,12 @@ class OrdersTest < ApplicationSystemTestCase
   end
 
   test "successful order & payment flow" do
+  
     visit warehouse_index_url
     click_on "Buy now", match: :first
 
     assert_text "New Order"
+    assert_text "Silver Ring"
 
     fill_in "First name", with: "Tester"
     fill_in "Last name", with: "McTest"
@@ -36,7 +38,7 @@ class OrdersTest < ApplicationSystemTestCase
     fill_in "billingPostalCode", with: "12345"
     click_on "Pay"
 
-    assert_text "paid: true", wait: 5
+    assert_text "Order Completed", wait: 5 
     
   end
 

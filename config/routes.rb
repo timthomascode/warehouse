@@ -10,6 +10,6 @@ Rails.application.routes.draw do
   end
 
   post 'process_ware/:ware_id', to: 'wares#process_ware'
-  get '/success', to: 'orders#success'
-  get '/cancel', to: 'orders#cancel'
+  get '/success', to: 'orders#success', as: 'success'
+  get '/cancel', to: 'orders#cancel', as: 'cancel'
 end

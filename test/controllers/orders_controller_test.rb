@@ -27,9 +27,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Order.count') do
       post "/process_ware/#{ wares(:silver_ring).id }"
       post orders_url, params: { order: { apt_num: @order.apt_num, city: @order.city, email: @order.email, first_name: @order.first_name, last_name: @order.last_name, state: @order.state, street_address: @order.street_address, zip_code: @order.zip_code } }
-    end
-
-    assert_redirected_to orders_pay_url 
+    end 
   end
 
   test "should show order" do

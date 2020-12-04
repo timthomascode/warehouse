@@ -47,36 +47,27 @@ class OrdersController < ApplicationController
   end
 
   def success
-    @order = get_order_from_session
-    @checkout_session = Stripe::Checkout::Session.retrieve(@order.checkout_session)
-    ware = @order.ware
+    @order = Order.find(session[:order_id])
+    @ware = @order.ware
     @order.update!(paid: true)
-    ware.update!(status: :sold)
+    @ware.update!(status: :sold)
     #TODO email customer receipt
     #TODO email self invoice copy
-    reset_session_order_id
+    session[:order_id] = nil
     session[:processed_ware] = nil
   end  
 
   def cancel
-    @order = get_order_from_session
+    @order = Order.find(session[:order_id])
     @ware = @order.ware
     @order.delete
     @order = Order.new
-    reset_session_order_id
+    session[:order_id] = nil
     redirect_to new_order_url
   end
 
   private
     
-    def reset_session_order_id
-      session[:order_id] = nil
-    end
-
-    def get_order_from_session
-      Order.find(session[:order_id])
-    end
-
     def create_checkout_session(order) 
       checkout_session = Stripe::Checkout::Session.create({
         customer_email: order.email,
@@ -94,8 +85,8 @@ class OrdersController < ApplicationController
           quantity: 1,
         }],
         mode: 'payment',
-        success_url: "http://localhost:3000/success",
-        cancel_url: 'http://localhost:3000/cancel',
+        success_url: success_url,
+        cancel_url: cancel_url,
       })
 
       return checkout_session.id
