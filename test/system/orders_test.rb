@@ -13,7 +13,7 @@ class OrdersTest < ApplicationSystemTestCase
     assert_selector "h3", text: "Orders"
   end
 
-  test "successful order & payment flow" do
+  test "successful order displays receipt" do
   
     visit warehouse_index_url
     click_on "Buy now", match: :first
@@ -38,7 +38,14 @@ class OrdersTest < ApplicationSystemTestCase
     fill_in "billingPostalCode", with: "12345"
     click_on "Pay"
 
-    assert_text "Order Completed", wait: 5 
+    assert_text "Payment Completed", wait: 5 
+    assert_text "Tester McTest"
+    assert_text "123 System Test Lane"
+    assert_text "Capybara, System Test 12345"
+    assert_text "test@example.com"
+    assert_text "Silver Ring"
+    assert_text wares(:silver_ring).description
+    assert_text wares(:silver_ring).price
     
   end
 
