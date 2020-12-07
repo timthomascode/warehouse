@@ -37,6 +37,8 @@ end
 
 class WaresControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
+  include ActionCable::TestHelper
+
   setup do
     @ware = wares(:silver_ring)
   end
@@ -45,6 +47,11 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
     post "/process_ware/#{@ware.id}"
     ware = Ware.find(@ware.id)
     assert_equal "processing", ware.status
+  end
+
+  test 'process_ware broadcasts to warehouse channel stream' do
+    post "/process_ware/#{@ware.id}"
+    assert_broadcasts('warehouse', 1)
   end
 
   test "process_ware stores ware's ID in the session" do

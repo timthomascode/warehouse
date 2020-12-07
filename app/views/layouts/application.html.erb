@@ -17,7 +17,9 @@
         <h1>Warehouse</h1>
       </div>
       <%= render "shared/admin_menu" %>
-      <%= yield %>
+      <main class="<%= controller.controller_name %>">
+        <%= yield %>
+      </main>
     </div>
   </body>
 </html>
