@@ -41,11 +41,19 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
     @ware = wares(:silver_ring)
   end
 
-  test 'process_ware' do
+  test 'process_ware changes available ware status to processing' do
     post "/process_ware/#{@ware.id}"
     ware = Ware.find(@ware.id)
     assert_equal "processing", ware.status
-    assert_equal ware.id, session[:processed_ware]
+  end
+
+  test "process_ware stores ware's ID in the session" do
+    post "/process_ware/#{@ware.id}"
+    assert_equal @ware.id, session[:processed_ware]
+  end
+
+  test 'process_ware redirects to new order page' do
+    post "/process_ware/#{@ware.id}"
     assert_redirected_to new_order_url
   end
 
@@ -146,4 +154,5 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal @controller.notice, "Ware cannot be deleted."
   end
+
 end
