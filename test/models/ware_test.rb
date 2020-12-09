@@ -9,7 +9,7 @@ class WareTest < ActiveSupport::TestCase
   test 'sell updates status to sold' do
     @ware = wares(:silver_ring)
     assert_equal false, @ware.sold?
-    @ware.sell
+    @ware.mark_sold
     assert_equal true, @ware.sold?
   end
 end
