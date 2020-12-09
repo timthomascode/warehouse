@@ -9,4 +9,8 @@ class Ware < ApplicationRecord
   def price
     number_to_currency(price_cents / 100.0)
   end
+
+  def sell
+    update!(status: :sold)
+  end
 end

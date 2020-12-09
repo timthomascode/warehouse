@@ -5,4 +5,11 @@ class WareTest < ActiveSupport::TestCase
     ware = Ware.new(name: "Test Ware", description: "Test description for the Test Ware", price_cents: 1155)
     assert_equal "$11.55", ware.price
   end
+
+  test 'sell updates status to sold' do
+    @ware = wares(:silver_ring)
+    assert_equal false, @ware.sold?
+    @ware.sell
+    assert_equal true, @ware.sold?
+  end
 end
