@@ -50,7 +50,7 @@ class OrdersController < ApplicationController
     if session[:order_id]
       @order = Order.find(session[:order_id])
       @ware = @order.ware
-      @order.update!(paid: true)
+      @order.pay
       @ware.update!(status: :sold)
       #TODO email customer receipt
       #TODO email self invoice copy
