@@ -4,12 +4,14 @@ class Order < ApplicationRecord
 
   def self.complete(order_id)
     order = Order.find(order_id)
-    order.pay
+    order.mark_paid
     order.ware.sell
     order
   end
 
-  def pay
+  private
+
+  def mark_paid
     update!(paid: true)
   end
 end
