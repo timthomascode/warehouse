@@ -48,10 +48,7 @@ class OrdersController < ApplicationController
 
   def success
     if session[:order_id]
-      @order = Order.find(session[:order_id])
-      @ware = @order.ware
-      @order.pay
-      @ware.sell
+      @order = Order.complete(session[:order_id])
       #TODO email customer receipt
       #TODO email self invoice copy
       session[:order_id] = nil
@@ -60,7 +57,7 @@ class OrdersController < ApplicationController
       redirect_to root_url
     end
   end  
-
+  
   def cancel
     if session[:order_id]
       @order = Order.find(session[:order_id])
