@@ -50,13 +50,8 @@ class OrdersController < ApplicationController
   end  
   
   def cancel
-    if session[:order_id]
-      @order = Order.find(session[:order_id])
-      @ware = @order.ware
-      @order.delete
-      @order = Order.new
-      session[:order_id] = nil
-    end
+    @order = Order.find_by(checkout_session: params[:session_id])
+    @order.cancel
     redirect_to new_order_url
   end
 
