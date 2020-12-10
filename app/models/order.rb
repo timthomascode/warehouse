@@ -9,6 +9,11 @@ class Order < ApplicationRecord
     order
   end
 
+  def complete
+    self.mark_paid
+    self.ware.mark_sold
+  end
+
   def mark_paid
     update!(paid: true)
   end
