@@ -15,8 +15,7 @@ class OrdersController < ApplicationController
 
   # GET /orders/new
   def new
-    @ware = Ware.find(session[:processed_ware])
-    @order = Order.new
+    @order = Order.new(ware_id: session[:processed_ware])
   end
 
   # GET /orders/1/edit

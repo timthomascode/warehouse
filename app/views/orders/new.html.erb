@@ -1,14 +1,14 @@
 <h3>New Order</h3>
 <div class="row border rounded-sm border-bottom-0">
   <div class="col-md-4 p-3">
-    <%= image_tag @ware.image.variant(**{ resize_to_limit: [300,300] }), class: "img-fluid" %>
+    <%= image_tag @order.ware.image.variant(**{ resize_to_limit: [300,300] }), class: "img-fluid" %>
   </div>
   <div class="col-md-8 p-3 m-auto">
-    <h5><%= @ware.name %></h5>
-    <h6><%= @ware.description %></h6>
-    <h4><%= @ware.price %></h4>
+    <h5><%= @order.ware.name %></h5>
+    <h6><%= @order.ware.description %></h6>
+    <h4><%= @order.ware.price %></h4>
   </div>
 </div>
 <%= render 'form', order: @order %>
 
-<%= link_to 'Store Home', warehouse_index_path, data: { confirm: "Leaving this page will cancel your order and return #{ @ware.name } to the storefront" } %>
+<%= link_to 'Store Home', warehouse_index_path, data: { confirm: "Leaving this page will cancel your order and return #{ @order.ware.name } to the storefront" } %>
