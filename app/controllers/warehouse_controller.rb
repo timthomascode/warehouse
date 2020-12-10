@@ -4,9 +4,9 @@ class WarehouseController < ApplicationController
       ware = Ware.find(session[:processed_ware])
       if ware.processing? 
         ware.update!(status: :available)
+        @wares = Ware.where(status: :available).order(:price_cents)
+        ActionCable.server.broadcast('warehouse', { html: render_to_string('warehouse/index', layout: false )})
       end
-      @wares = Ware.where(status: :available).order(:price_cents)
-      ActionCable.server.broadcast('warehouse', { html: render_to_string('warehouse/index', layout: false )})
       session[:processed_ware] = nil
     end
     @wares = Ware.where(status: :available).order(:price_cents)
