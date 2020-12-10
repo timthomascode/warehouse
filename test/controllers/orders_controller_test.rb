@@ -8,6 +8,29 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     @admin = admins(:one)
   end
 
+  test 'success should complete order' do
+
+    test_order = Order.create!(
+      first_name: "Orders",
+      last_name: "#success",
+      street_address: "123 Should",
+      city: "Complete",
+      state: "Order",
+      zip_code: "12345",
+      email: "success_test@example.com",
+      ware: wares(:silver_ring),
+      checkout_session: "success_test_checkout_session")
+
+    assert_equal false, Order.find(test_order.id).paid?
+
+    get "#{ success_url }?session_id=success_test_checkout_session"
+    assert_response :success
+
+    result_order = Order.find(test_order.id)
+    assert_equal true, result_order.paid?
+    assert_equal true, result_order.ware.sold?
+  end
+
   test "should get index" do
     get orders_url
     assert_redirected_to new_admin_session_url

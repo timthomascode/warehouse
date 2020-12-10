@@ -29,11 +29,7 @@ class OrdersController < ApplicationController
     @order.ware_id = session[:processed_ware]
     @order.checkout_session = create_checkout_session(@order)
 
-    if @order.save
-      session[:order_id] = @order.id
-    else
-      redirect_to new_order_url 
-    end
+    redirect_to new_order_url unless @order.save
   end
 
   # DELETE /orders/1
@@ -47,15 +43,10 @@ class OrdersController < ApplicationController
   end
 
   def success
-    if session[:order_id]
-      @order = Order.complete(session[:order_id])
-      #TODO email customer receipt
-      #TODO email self invoice copy
-      session[:order_id] = nil
-      session[:processed_ware] = nil
-    else
-      redirect_to root_url
-    end
+    @order = Order.find_by(checkout_session: params[:session_id])
+    @order.complete
+    #TODO email customer receipt
+    #TODO email self invoice copy
   end  
   
   def cancel
@@ -89,7 +80,7 @@ class OrdersController < ApplicationController
         }],
         mode: 'payment',
         success_url: "#{ success_url }?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: cancel_url,
+        cancel_url: "#{ cancel_url }?session_id={CHECKOUT_SESSION_ID}",
       })
 
       return checkout_session.id
