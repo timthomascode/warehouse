@@ -9,8 +9,11 @@ one:
   state: Illinois
   zip_code: 70007
   email: test@example.com
+  paid: true
+  checkout_session: "fake-session-for-order-one"
 
-two:
+unpaid:
+  ware: steel_dagger
   first_name: Tim
   last_name: Thomas
   street_address: 123 Ravenshire Ct
@@ -18,3 +21,6 @@ two:
   state: Illinois
   zip_code: 70007
   email: test@example.com
+  paid: false
+  checkout_session: "fake-session-for-order-two"
+

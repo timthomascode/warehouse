@@ -7,6 +7,11 @@ class Order < ApplicationRecord
     self.ware.mark_sold
   end
 
+  def cancel
+    self.ware.update!(status: :available)
+    self.delete
+  end
+
   def mark_paid
     self.update!(paid: true)
   end

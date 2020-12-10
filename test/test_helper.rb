@@ -9,5 +9,20 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
-  # Add more helper methods to be used by all tests here...
+  # Add more helper methods to be used by all tests here... 
+  def paid_order_count
+    Order.where(paid: true).count
+  end
+
+  def sold_ware_count
+    Ware.where(status: :sold).count
+  end
+
+  def order_count
+    Order.count
+  end
+
+  def available_ware_count
+    Ware.where(status: :available).count
+  end
 end

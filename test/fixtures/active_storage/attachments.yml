@@ -7,3 +7,8 @@ silver_ring:
   name: image
   record: silver_ring (Ware)
   blob: test_image_blob
+
+steel_dagger:
+  name: image
+  record: steel_dagger (Ware)
+  blob: test_image_blob
