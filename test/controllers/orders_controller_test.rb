@@ -23,7 +23,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal false, Order.find(test_order.id).paid?
 
-    get "#{ success_url }?session_id=success_test_checkout_session"
+    get success_url, params: { session_id: test_order.checkout_session }
     assert_response :success
 
     result_order = Order.find(test_order.id)

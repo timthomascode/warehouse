@@ -8,6 +8,6 @@ class Order < ApplicationRecord
   end
 
   def mark_paid
-    update!(paid: true)
+    self.update!(paid: true)
   end
 end
