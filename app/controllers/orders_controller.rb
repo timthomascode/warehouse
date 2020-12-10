@@ -25,7 +25,6 @@ class OrdersController < ApplicationController
   # POST /orders
   def create
     @order = Order.new(order_params)
-    @order.ware_id = session[:processed_ware]
     @order.checkout_session = create_checkout_session(@order)
 
     redirect_to new_order_url unless @order.save
@@ -88,6 +87,6 @@ class OrdersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def order_params
-      params.require(:order).permit(:first_name, :last_name, :street_address, :apt_num, :city, :state, :zip_code, :email)
+      params.require(:order).permit(:ware_id, :first_name, :last_name, :street_address, :apt_num, :city, :state, :zip_code, :email)
     end
 end

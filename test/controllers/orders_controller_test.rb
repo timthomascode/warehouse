@@ -52,7 +52,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test "should create order" do
     assert_difference('Order.count') do
       post "/process_ware/#{ wares(:silver_ring).id }"
-      post orders_url, params: { order: { apt_num: @order.apt_num, city: @order.city, email: @order.email, first_name: @order.first_name, last_name: @order.last_name, state: @order.state, street_address: @order.street_address, zip_code: @order.zip_code } }
+      post orders_url, params: { order: { apt_num: @order.apt_num, city: @order.city, email: @order.email, first_name: @order.first_name, last_name: @order.last_name, state: @order.state, street_address: @order.street_address, ware_id: wares(:silver_ring).id, zip_code: @order.zip_code } }
     end 
   end
 

@@ -59,6 +59,8 @@
       </div>
     </div>
 
+    <%= form.hidden_field :ware_id, value: order.ware.id %>
+
     <div class="actions">
       <%= form.submit "Continue to Payment" %>
     </div>
