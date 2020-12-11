@@ -44,29 +44,29 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'process_ware changes available ware status to processing' do
-    post "/process_ware/#{@ware.id}"
+    post "/process_ware", params: { ware_id: @ware.id }
     ware = Ware.find(@ware.id)
     assert_equal "processing", ware.status
   end
 
   test 'process_ware broadcasts to warehouse channel stream' do
-    post "/process_ware/#{@ware.id}"
+    post "/process_ware", params: { ware_id: @ware.id }
     assert_broadcasts('warehouse', 1)
   end
 
   test "process_ware stores ware's ID in the session" do
-    post "/process_ware/#{@ware.id}"
+    post "/process_ware", params: { ware_id: @ware.id }
     assert_equal @ware.id, session[:processed_ware]
   end
 
   test 'process_ware redirects to new order page' do
-    post "/process_ware/#{@ware.id}"
+    post "/process_ware", params: { ware_id: @ware.id }
     assert_redirected_to new_order_url
   end
 
   test "process_ware can't be called on processing and sold wares" do
     @ware.update(status: :processing)
-    post "/process_ware/#{@ware.id}"
+    post "/process_ware", params: { ware_id: @ware.id }
     assert_nil session[:processed_ware]
     assert_redirected_to warehouse_index_url 
   end
