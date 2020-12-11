@@ -57,7 +57,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   test 'new stores ware ID in the session' do
     get new_order_url, params: { ware_id: wares(:silver_ring).id }
-    assert_equal wares(:silver_ring).id, session[:processed_ware]
+    assert_equal wares(:silver_ring).id, session[:ware_id]
   end
 
   test 'new broadcasts to warehouse stream' do

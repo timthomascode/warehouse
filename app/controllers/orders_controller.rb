@@ -36,7 +36,7 @@ class OrdersController < ApplicationController
 
     redirect_to new_order_url unless @order.save
   end
-
+  
   # DELETE /orders/1
   # DELETE /orders/1.json
   def destroy
@@ -64,7 +64,7 @@ class OrdersController < ApplicationController
   private
 
     def store_ware_in_session(ware)
-      session[:processed_ware] = ware.id
+      session[:ware_id] = ware.id
     end
     
     def create_checkout_session(order) 
