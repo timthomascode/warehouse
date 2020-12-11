@@ -6,10 +6,13 @@ class WareTest < ActiveSupport::TestCase
     assert_equal "$11.55", ware.price
   end
 
-  test 'sell updates status to sold' do
+  test 'mark_sold updates status to sold' do
     @ware = wares(:silver_ring)
+    assert_equal 1, sold_ware_count
     assert_equal false, @ware.sold?
+
     @ware.mark_sold
+    assert_equal 2, sold_ware_count
     assert_equal true, @ware.sold?
   end
 end
