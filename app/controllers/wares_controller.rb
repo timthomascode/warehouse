@@ -68,8 +68,7 @@ class WaresController < ApplicationController
     if ware.available?
       ware.update!(status: :processing)
       session[:processed_ware] = ware.id
-      @wares = Ware.where(status: :available).order(:created_at)
-      ActionCable.server.broadcast 'warehouse', { html: render_to_string('warehouse/index', layout: false) }
+      broadcast_wares_to_warehouse
       redirect_to new_order_url
     else
       session[:processed_ware] = nil
