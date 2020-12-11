@@ -17,4 +17,8 @@ class Ware < ApplicationRecord
   def process
     self.update!(status: :processing) if self.available?
   end
+  
+  def unprocess
+    self.update!(status: :available) if self.processing?
+  end
 end

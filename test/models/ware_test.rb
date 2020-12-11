@@ -35,4 +35,17 @@ class WareTest < ActiveSupport::TestCase
     assert_equal false, @ware.processing?
   end
 
+  test 'unprocess updates status of a processing ware, returns true' do
+    @ware = wares(:steel_dagger)
+    assert_equal false, @ware.available?
+    assert_equal true, @ware.unprocess
+    assert_equal true, @ware.available?
+  end
+
+  test 'unprocess returns nil if ware is not processing' do
+    @ware = wares(:magical_amulet)
+    assert_equal false, @ware.processing?
+    assert_nil @ware.unprocess
+    assert_equal false, @ware.available?
+  end
 end
