@@ -48,6 +48,30 @@ class OrdersTest < ApplicationSystemTestCase
     assert_text wares(:silver_ring).price
     
   end
+  
+  test "cancellation from Stripe page redirects to new order page" do
+
+    visit warehouse_index_url
+    click_on "Buy now", match: :first
+
+    assert_text "New Order"
+    assert_text "Silver Ring"
+
+    fill_in "First name", with: "Tester"
+    fill_in "Last name", with: "McTest"
+    fill_in "Street address", with: "123 System Test Lane"
+    fill_in "City", with: "Capybara"
+    fill_in "State", with: "System Test"
+    fill_in "Zip code", with: "12345"
+    fill_in "Email", with: "test@example.com"
+    click_on "Continue to Payment"
+
+    assert_text "Pay with card", wait: 5 
+    click_on "Back"
+
+    assert_text "New Order"
+    assert_text "Silver Ring"
+  end
 
   test "destroying an Order" do
     sign_in @admin
