@@ -8,6 +8,6 @@ class WarehouseController < ApplicationController
       end
     end
     session.delete(:processed_ware)
-    @wares = Ware.where(status: :available).order(:price_cents)
+    @wares = Ware.where(status: :available).order(:created_at)
   end
 end
