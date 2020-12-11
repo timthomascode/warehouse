@@ -15,6 +15,7 @@ class OrdersController < ApplicationController
 
   # GET /orders/new
   def new
+    broadcast_wares_to_warehouse
     @order = Order.new(ware_id: session[:processed_ware])
   end
 

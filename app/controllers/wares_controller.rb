@@ -68,7 +68,6 @@ class WaresController < ApplicationController
     if ware.available?
       ware.update!(status: :processing)
       session[:processed_ware] = ware.id
-      broadcast_wares_to_warehouse
       redirect_to new_order_url
     else
       session[:processed_ware] = nil
