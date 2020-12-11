@@ -9,7 +9,6 @@ Rails.application.routes.draw do
     get 'logout', to: 'devise/sessions#destroy'
   end
 
-  post 'process_ware', to: 'wares#process_ware'
   get '/success', to: 'orders#success', as: 'success'
   get '/cancel', to: 'orders#cancel', as: 'cancel'
 end

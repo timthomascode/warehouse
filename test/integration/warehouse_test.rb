@@ -7,8 +7,7 @@ class WarehouseTest < ActionDispatch::IntegrationTest
     assert_select 'div',  wares(:silver_ring).name
 
     open_session do |other_session|
-      other_session.get warehouse_index_url
-      other_session.post "/process_ware/", params: { ware_id: wares(:silver_ring).id }
+      other_session.get new_order_url, params: { ware_id: wares(:silver_ring).id }
     end
 
     assert_select 'div',  wares(:silver_ring).name, false

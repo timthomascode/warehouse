@@ -15,8 +15,14 @@ class OrdersController < ApplicationController
 
   # GET /orders/new
   def new
-    broadcast_wares_to_warehouse
-    @order = Order.new(ware_id: session[:processed_ware])
+    ware = Ware.find(params[:ware_id])
+    if ware.process
+      store_ware_in_session(ware)
+      broadcast_wares_to_warehouse
+      @order = Order.new(ware: ware)
+    else
+      redirect_to root_url, notice: "Item no longer available"
+    end
   end
 
   # GET /orders/1/edit
@@ -50,11 +56,16 @@ class OrdersController < ApplicationController
   
   def cancel
     @order = Order.find_by(checkout_session: params[:session_id])
+    ware_id = @order.ware_id
     @order.cancel
-    redirect_to new_order_url
+    redirect_to new_order_url(ware_id: ware_id)
   end
 
   private
+
+    def store_ware_in_session(ware)
+      session[:processed_ware] = ware.id
+    end
     
     def create_checkout_session(order) 
       checkout_session = Stripe::Checkout::Session.create({

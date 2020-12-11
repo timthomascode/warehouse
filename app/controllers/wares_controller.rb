@@ -63,18 +63,6 @@ class WaresController < ApplicationController
     end
   end
 
-  def process_ware
-    ware = Ware.find(params[:ware_id])
-    if ware.available?
-      ware.update!(status: :processing)
-      session[:processed_ware] = ware.id
-      redirect_to new_order_url
-    else
-      session[:processed_ware] = nil
-      redirect_to warehouse_index_url, notice: "Item no longer available."
-    end
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_ware

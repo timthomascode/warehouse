@@ -13,7 +13,7 @@
       <div class="name"><%= ware.name %></div>
       <div class="description"><%= ware.description %></div>
       <div class="price"><%= ware.price %></div>
-      <%= button_to "Buy now", { controller: 'wares', action: 'process_ware', ware_id: ware.id },  class: "buy-now"  %>
+      <%= link_to "Buy now", { controller: 'orders', action: 'new', ware_id: ware.id },  class: "buy-now mt-3"  %>
     </div>
   <% end %>
 </div>
