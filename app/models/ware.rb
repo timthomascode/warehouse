@@ -13,4 +13,8 @@ class Ware < ApplicationRecord
   def mark_sold
     update!(status: :sold)
   end
+
+  def process
+    self.update!(status: :processing) if self.available?
+  end
 end

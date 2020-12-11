@@ -15,4 +15,24 @@ class WareTest < ActiveSupport::TestCase
     assert_equal 2, sold_ware_count
     assert_equal true, @ware.sold?
   end
+
+  test 'process updates status of an available ware, returns true' do
+    @ware = wares(:silver_ring)
+    assert_equal true, @ware.available?
+
+    assert_equal true, @ware.process
+
+    assert_equal false, @ware.available?
+    assert_equal true, @ware.processing?
+  end
+
+  test 'process returns nil if ware is not available' do
+    @ware = wares(:magical_amulet)
+    assert_equal false, @ware.available?
+
+    assert_nil @ware.process
+    assert_equal false, @ware.available?
+    assert_equal false, @ware.processing?
+  end
+
 end
