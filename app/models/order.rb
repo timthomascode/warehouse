@@ -11,6 +11,14 @@ class Order < ApplicationRecord
     self.ware.update!(status: :available)
     self.delete
   end
+  
+  def payment_verified?
+    begin
+      Stripe::Checkout::Session.retrieve(checkout_session).payment_status == "paid"
+    rescue
+      false
+    end
+  end
 
   def mark_paid
     self.update!(paid: true)

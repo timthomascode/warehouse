@@ -4,21 +4,26 @@ class OrderTest < ActiveSupport::TestCase
 
   test 'complete marks order paid and ware sold' do
     @order = orders(:unpaid)
-    assert_equal 1, paid_order_count
-    assert_equal 1, sold_ware_count
 
-    @order.complete
-    assert_equal 2, paid_order_count
-    assert_equal 2, sold_ware_count
+    assert_difference ->{ paid_order_count } => 1, ->{ sold_ware_count } => 1 do
+      @order.complete
+    end
   end
 
   test 'cancel deletes order and marks ware available' do
     @order = orders(:unpaid)
-    assert_equal 2, order_count
-    assert_equal 1, available_ware_count
+    assert_difference ->{ order_count } => -1, ->{ available_ware_count } => 1 do
+      @order.cancel
+    end
+  end
 
-    @order.cancel
-    assert_equal 1, order_count
-    assert_equal 2, available_ware_count
+  test 'payment_verified? returns false if payment not received by Stripe' do
+    @order = orders(:unpaid)
+    assert_equal false, @order.payment_verified?
+  end
+
+  test 'payment_verified? returns true if payment receieved by Stripe' do
+    @order = orders(:stripe_test_order)
+    assert_equal true, @order.payment_verified?
   end
 end

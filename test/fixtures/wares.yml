@@ -17,3 +17,9 @@ steel_dagger:
   description: Sharp and pointy!
   price_cents: 350
   status: processing
+
+walking_stick:
+  name: Walking Stick
+  description: Made from a White Oak tree, hand-carved, with leather handle.
+  price_cents: 10000
+  status: sold

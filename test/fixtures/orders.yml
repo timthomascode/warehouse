@@ -24,3 +24,13 @@ unpaid:
   paid: false
   checkout_session: "fake-session-for-order-two"
 
+stripe_test_order:
+  ware: walking_stick
+  first_name: Hello
+  last_name: Stripe
+  street_address: 456 Who Cares Ln
+  city: Fun
+  state: Somewhere
+  zip_code: 12345
+  paid: false
+  checkout_session: "cs_test_a1nqL1rnu2KUDOpWR5vndI4Yks3hcANF2k1LGAcQ7mCW6SsbAzO2srLtDR"
