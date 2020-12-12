@@ -19,6 +19,12 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'success redirects to cancel if payment not verified' do
+    test_order = orders(:unpaid)
+    get success_url, params: { session_id: test_order.checkout_session }
+    assert_redirected_to cancel_url
+  end
+
   test "cancel should cancel order" do
     test_order = orders(:unpaid)
 

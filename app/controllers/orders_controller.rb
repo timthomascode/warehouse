@@ -49,9 +49,13 @@ class OrdersController < ApplicationController
 
   def success
     @order = Order.find_by(checkout_session: params[:session_id])
-    @order.complete
+    if @order.payment_verified?
+      @order.complete
     #TODO email customer receipt
     #TODO email self invoice copy
+    else
+      redirect_to :cancel, params: { checkout_session: @order.checkout_session }
+    end
   end  
   
   def cancel
