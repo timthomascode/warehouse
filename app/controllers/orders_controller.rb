@@ -49,8 +49,7 @@ class OrdersController < ApplicationController
 
   def success
     @order = Order.find_by(checkout_session: params[:session_id])
-    if @order.payment_verified?
-      @order.complete
+    if @order.complete
     #TODO email customer receipt
     #TODO email self invoice copy
     else

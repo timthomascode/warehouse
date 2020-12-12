@@ -2,11 +2,19 @@ require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
 
-  test 'complete marks order paid and ware sold' do
-    @order = orders(:unpaid)
+  test 'complete marks order paid and ware sold, returns true if payment can be verified' do
+    @order = orders(:stripe_test_order)
 
     assert_difference ->{ paid_order_count } => 1, ->{ sold_ware_count } => 1 do
-      @order.complete
+      assert_equal true, @order.complete
+    end
+  end
+
+  test 'complete returns nil if payment cannot be verified' do
+    @order = orders(:unpaid)
+
+    assert_no_difference [ 'paid_order_count', 'sold_ware_count'] do
+      assert_nil @order.complete
     end
   end
 
