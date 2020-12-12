@@ -10,26 +10,24 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'success should complete order' do
-    test_order = orders(:unpaid)
-    assert_equal 1, paid_order_count
-    assert_equal 1, sold_ware_count
+    test_order = orders(:stripe_test_order)
 
-    get success_url, params: { session_id: test_order.checkout_session }
+    assert_difference ->{ paid_order_count } => 1, ->{ sold_ware_count } => 1 do
+      get success_url, params: { session_id: test_order.checkout_session }
+    end
+
     assert_response :success
-    assert_equal 2, paid_order_count
-    assert_equal 2, sold_ware_count
   end
 
   test "cancel should cancel order" do
     test_order = orders(:unpaid)
-    assert_equal 2, order_count
-    assert_equal 1, available_ware_count
 
-    get cancel_url, params: { session_id: test_order.checkout_session }
+    assert_difference ->{ order_count } => -1, ->{ available_ware_count } => 1 do
+      get cancel_url, params: { session_id: test_order.checkout_session }
+    end
+
     assert_response :redirect
     assert_redirected_to new_order_url(ware_id: test_order.ware_id)
-    assert_equal 1, order_count
-    assert_equal 2, available_ware_count
   end
 
   test "should get index" do

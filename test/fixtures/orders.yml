@@ -32,5 +32,6 @@ stripe_test_order:
   city: Fun
   state: Somewhere
   zip_code: 12345
+  email: test@example.com
   paid: false
   checkout_session: "cs_test_a1nqL1rnu2KUDOpWR5vndI4Yks3hcANF2k1LGAcQ7mCW6SsbAzO2srLtDR"

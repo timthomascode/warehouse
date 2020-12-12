@@ -12,3 +12,8 @@ steel_dagger:
   name: image
   record: steel_dagger (Ware)
   blob: test_image_blob
+
+walking_stick:
+  name: image
+  record: walking_stick (Ware)
+  blob: test_image_blob
