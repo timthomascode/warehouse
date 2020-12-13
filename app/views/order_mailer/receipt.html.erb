@@ -1,0 +1,16 @@
+<h1>RECEIPT FOR ORDER #<%= @order.id %></h1>
+<h2>Invoice Total: <%= @order.ware.price %></h2>
+
+<h3>Billed To:</h3>
+<%= @order.first_name %> <%= @order.last_name %><br>
+<%= @order.street_address %> <%= @order.apt_num if @order.apt_num %><br>
+<%= @order.city %>, <%= @order.state %> <%= @order.zip_code %><br>
+<%= @order.email %>
+
+<h3>For the Following Item:</h3>
+<p>Name: <%= @order.ware.name %></p>
+<p>Description: <%= @order.ware.description %></p>
+
+<h4>Payment processed by Stripe.com on <%= @order.created_at.strftime("%m/%d/%Y") %></h4>
+
+You will be notified again when the item ships! Thank you for your order!
