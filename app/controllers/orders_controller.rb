@@ -50,8 +50,7 @@ class OrdersController < ApplicationController
   def success
     @order = Order.find_by(checkout_session: params[:session_id])
     if @order.complete
-    #TODO email customer receipt
-    #TODO email self invoice copy
+      OrderMailer.with(order_id: @order.id).receipt.deliver_later
     else
       redirect_to :cancel, params: { checkout_session: @order.checkout_session }
     end

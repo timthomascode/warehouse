@@ -19,6 +19,14 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'success sends email' do
+    test_order = orders(:stripe_test_order)
+
+    assert_emails 1 do
+      get success_url, params: { session_id: test_order.checkout_session }
+    end
+  end
+
   test 'success redirects to cancel if payment not verified' do
     test_order = orders(:unpaid)
     get success_url, params: { session_id: test_order.checkout_session }
