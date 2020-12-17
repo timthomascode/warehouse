@@ -14,7 +14,7 @@ class WarehouseControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index broadcasts to warehouse stream if ware in session" do
-    get new_order_url, params: { ware_id: wares(:silver_ring).id }
+    get start_order_url, params: { ware_id: wares(:silver_ring).id }
     assert_broadcasts 'warehouse', 1
     get warehouse_index_url
     assert_broadcasts 'warehouse', 2

@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :edit, :destroy]
-  before_action :authenticate_admin!, except: [:new, :create, :create_checkout_session, :success, :cancel ]
+  before_action :authenticate_admin!, only: [:index, :show, :edit]
 
   # GET /orders
   # GET /orders.json
@@ -13,54 +13,50 @@ class OrdersController < ApplicationController
   def show
   end
 
-  # GET /orders/new
-  def new
+  def start
     ware = Ware.find(params[:ware_id])
     if ware.process
       store_ware_in_session(ware)
       broadcast_wares_to_warehouse
       @order = Order.new(ware: ware)
+      @order.save(validate: false)
     else
-      redirect_to root_url, notice: "Item no longer available"
+      redirect_to root_url, notice: "Ware no longer available"
     end
+  end
+
+  def continue
+    @order = Order.find(filtered_params[:order_id])
+    @order.first_name = filtered_params[:first_name]
+    @order.last_name = filtered_params[:last_name]
+    @order.street_address = filtered_params[:street_address]
+    @order.apt_num = filtered_params[:apt_num]
+    @order.city = filtered_params[:city]
+    @order.state = filtered_params[:state]
+    @order.zip_code = filtered_params[:zip_code]
+    @order.email = filtered_params[:email]
+    @order.checkout_session = create_checkout_session(@order)
+    redirect_to cancel_url, params: { session_id: @order.checkout_session } unless @order.save
   end
 
   # GET /orders/1/edit
   def edit
   end
-
-  # POST /orders
-  def create
-    @order = Order.new(order_params)
-    @order.checkout_session = create_checkout_session(@order)
-
-    redirect_to new_order_url unless @order.save
-  end
   
-  # DELETE /orders/1
-  # DELETE /orders/1.json
-  def destroy
-    @order.destroy
-    respond_to do |format|
-      format.html { redirect_to orders_url, notice: 'Order was successfully destroyed.' }
-      format.json { head :no_content }
-    end
-  end
-
   def success
     @order = Order.find_by(checkout_session: params[:session_id])
     if @order.complete
       OrderMailer.with(order_id: @order.id).receipt.deliver_later
     else
-      redirect_to :cancel, params: { checkout_session: @order.checkout_session }
+      redirect_to cancel_url, params: { checkout_session: @order.checkout_session }
     end
   end  
-  
+
   def cancel
     @order = Order.find_by(checkout_session: params[:session_id])
     ware_id = @order.ware_id
     @order.cancel
-    redirect_to new_order_url(ware_id: ware_id)
+    redirect_to start_order_url, params: { ware_id: ware_id }
   end
 
   private
@@ -102,5 +98,8 @@ class OrdersController < ApplicationController
     # Only allow a list of trusted parameters through.
     def order_params
       params.require(:order).permit(:ware_id, :first_name, :last_name, :street_address, :apt_num, :city, :state, :zip_code, :email)
+    end
+    def filtered_params
+      params.require(:order).permit(:order_id, :first_name, :last_name, :street_address, :apt_num, :city, :state, :zip_code, :email)
     end
 end

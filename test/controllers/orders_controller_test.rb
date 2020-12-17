@@ -9,6 +9,43 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     @admin = admins(:one)
   end
 
+  test 'start should save a new order with a ware' do
+    assert_difference ->{ available_ware_count } => -1, ->{ order_count } => 1 do
+      get start_order_url, params: { ware_id: wares(:silver_ring).id }
+    end
+
+    assert_select 'h3', "New Order"
+  end
+
+  test 'continue should never create a new order' do
+    get start_order_url, params: { ware_id: wares(:silver_ring).id }
+    assert_no_difference 'order_count' do
+      post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Bob", last_name: "Evans", street_address: "123 Breakfast Lane", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
+    end
+  end
+
+  test 'continue should save a valid order' do
+    test_ware_id = wares(:silver_ring).id
+    get start_order_url params: { ware_id: wares(:silver_ring).id }
+
+    test_order = Order.where(ware_id: test_ware_id).first
+    assert_equal "Silver Ring", test_order.ware.name
+    assert_equal false, test_order.valid?
+
+    post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Bob", last_name: "Evans", street_address: "123 Breakfast Lane", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
+
+    test_order.reload
+    assert_equal "Bob", test_order.first_name 
+    assert_equal true, test_order.valid?
+  end
+
+  test 'continue redirects to cancel if order is not valid' do
+    get start_order_url params: { ware_id: wares(:silver_ring).id }
+    post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Missing", last_name: "Street_Address", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
+
+    assert_redirected_to :cancel
+  end
+
   test 'success should complete order' do
     test_order = orders(:stripe_test_order)
 
@@ -41,7 +78,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :redirect
-    assert_redirected_to new_order_url(ware_id: test_order.ware_id)
+    assert_redirected_to start_order_url
   end
 
   test "should get index" do
@@ -53,34 +90,22 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get new" do
-    get new_order_url, params: { ware_id: wares(:silver_ring).id }
-    assert_response :success
-    assert_select 'h3', 'New Order'
-  end
-
-  test 'new changes available ware to processing' do
+  test 'start changes available ware to processing' do
     assert_equal false, wares(:silver_ring).processing?
-    get new_order_url, params: { ware_id: wares(:silver_ring).id }
+    get start_order_url, params: { ware_id: wares(:silver_ring).id }
 
     result = Ware.find(wares(:silver_ring).id)
     assert_equal true, result.processing?
   end
 
-  test 'new stores ware ID in the session' do
-    get new_order_url, params: { ware_id: wares(:silver_ring).id }
+  test 'start stores ware ID in the session' do
+    get start_order_url, params: { ware_id: wares(:silver_ring).id }
     assert_equal wares(:silver_ring).id, session[:ware_id]
   end
 
-  test 'new broadcasts to warehouse stream' do
-    get new_order_url, params: { ware_id: wares(:silver_ring).id }
+  test 'start broadcasts to warehouse stream' do
+    get start_order_url, params: { ware_id: wares(:silver_ring).id }
     assert_broadcasts('warehouse', 1)
-  end
-
-  test "should create order" do
-    assert_difference('Order.count') do
-      post orders_url, params: { order: { apt_num: @order.apt_num, city: @order.city, email: @order.email, first_name: @order.first_name, last_name: @order.last_name, state: @order.state, street_address: @order.street_address, ware_id: wares(:silver_ring).id, zip_code: @order.zip_code } }
-    end 
   end
 
   test "should show order" do
@@ -101,17 +126,4 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should destroy order" do
-    assert_difference('Order.count', 0) do
-      delete order_url(@order)
-    end
-
-    assert_redirected_to new_admin_session_url
-
-    sign_in @admin
-    assert_difference('Order.count', -1) do
-      delete order_url(@order)
-    end
-    assert_redirected_to orders_url
-  end
 end

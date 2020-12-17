@@ -13,7 +13,7 @@
       <div class="name"><%= ware.name %></div>
       <div class="description"><%= ware.description %></div>
       <div class="price"><%= ware.price %></div>
-      <%= button_to "Buy now", new_order_path, method: :get, params: { ware_id: ware.id }, class: "buy-now"  %>
+      <%= button_to "Buy now", start_order_path, method: :get, params: { ware_id: ware.id }, class: "buy-now"  %>
     </div>
   <% end %>
 </div>
