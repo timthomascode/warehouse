@@ -7,5 +7,4 @@ Over time, I've learned both Ruby and Rails from official guides, API documentat
 
 ## Design Motivations/Decisions
 
-Warehouse was inspired by the concept of a garage sale. For that reason, there is no quantity for wares - items must be listed and sold individually. That also means there is no cart. Not the wisest decision for a _real_ e-commerce application, but it made for some interesting problem solving for a personal project.
-
+Warehouse was inspired by the concept of a garage sale. For that reason, there is no quantity for wares - items must be listed and sold individually. That also means there is no cart. Not the wisest decision for a _real_ e-commerce application, but it created a unique set problems for a personal project. An order timeout of 15 minutes keeps the warehouse index updated, with the help of ActionCable and ActiveJob.
