@@ -39,11 +39,11 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_equal true, test_order.valid?
   end
 
-  test 'continue redirects to cancel if order is not valid' do
+  test 'continue redirects to start if order is not valid' do
     get start_order_url params: { ware_id: wares(:silver_ring).id }
     post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Missing", last_name: "Street_Address", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
 
-    assert_redirected_to :cancel
+    assert_redirected_to start_order_url(ware_id: wares(:silver_ring).id) 
   end
 
   test 'success should complete order' do
@@ -67,10 +67,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test 'success redirects to cancel if payment not verified' do
     test_order = orders(:unpaid)
     get success_url, params: { session_id: test_order.checkout_session }
-    assert_redirected_to cancel_url
+    assert_redirected_to cancel_url(checkout_session: test_order.checkout_session)
   end
 
-  test "cancel should cancel order" do
+  test "cancel should restart order" do
     test_order = orders(:unpaid)
 
     assert_difference ->{ order_count } => -1, ->{ available_ware_count } => 1 do
@@ -78,7 +78,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :redirect
-    assert_redirected_to start_order_url
+    assert_redirected_to start_order_url(ware_id: test_order.ware.id)
   end
 
   test "should get index" do

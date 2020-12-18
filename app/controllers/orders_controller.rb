@@ -35,8 +35,13 @@ class OrdersController < ApplicationController
     @order.state = filtered_params[:state]
     @order.zip_code = filtered_params[:zip_code]
     @order.email = filtered_params[:email]
-    @order.checkout_session = create_checkout_session(@order)
-    redirect_to cancel_url, params: { session_id: @order.checkout_session } unless @order.save
+
+    if @order.valid?
+      @order.checkout_session = create_checkout_session(@order)
+      @order.save
+    else
+      redirect_to start_order_url(ware_id: @order.ware.id), notice: "Missing order fields"
+    end
   end
 
   # GET /orders/1/edit
@@ -48,7 +53,7 @@ class OrdersController < ApplicationController
     if @order.complete
       OrderMailer.with(order_id: @order.id).receipt.deliver_later
     else
-      redirect_to cancel_url, params: { checkout_session: @order.checkout_session }
+      redirect_to cancel_url(checkout_session: @order.checkout_session)
     end
   end  
 
@@ -56,7 +61,7 @@ class OrdersController < ApplicationController
     @order = Order.find_by(checkout_session: params[:session_id])
     ware_id = @order.ware_id
     @order.cancel
-    redirect_to start_order_url, params: { ware_id: ware_id }
+    redirect_to start_order_url(ware_id: ware_id)
   end
 
   private

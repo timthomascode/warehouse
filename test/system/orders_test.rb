@@ -49,7 +49,7 @@ class OrdersTest < ApplicationSystemTestCase
     
   end
   
-  test "cancellation from Stripe page redirects to new order page" do
+  test "cancellation from Stripe page redirects to warehouse index" do
 
     visit warehouse_index_url
     click_on "Buy now", match: :first
@@ -69,17 +69,8 @@ class OrdersTest < ApplicationSystemTestCase
     assert_text "Pay with card", wait: 5 
     click_on "Back"
 
-    assert_text "New Order"
+    assert_text "Warehouse"
     assert_text "Silver Ring"
   end
 
-  test "destroying an Order" do
-    sign_in @admin
-    visit orders_url
-    page.accept_confirm do
-      click_on "Destroy", match: :first
-    end
-
-    assert_text "Order was successfully destroyed"
-  end
 end
