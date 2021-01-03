@@ -3,6 +3,7 @@ require 'test_helper'
 class OrdersControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
   include ActionCable::TestHelper
+  include ActiveJob::TestHelper
 
   setup do
     @order = orders(:one)
@@ -15,6 +16,12 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_select 'h3', "New Order"
+  end
+
+  test 'start enqueues a job' do
+    assert_enqueued_jobs 0
+    get start_order_url, params: { ware_id: wares(:silver_ring).id }
+    assert_enqueued_jobs 1
   end
 
   test 'continue should never create a new order' do

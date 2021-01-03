@@ -20,6 +20,7 @@ class OrdersController < ApplicationController
       broadcast_wares_to_warehouse
       @order = Order.new(ware: ware)
       @order.save(validate: false)
+      OrderTimeoutJob.set(wait: 15.minutes).perform_later(@order.id)
     else
       redirect_to root_url, notice: "Ware no longer available"
     end
