@@ -25,6 +25,13 @@ class OrderTest < ActiveSupport::TestCase
     end
   end
 
+  test 'cancel does not delete paid orders' do
+    @order = orders(:paid)
+    assert_no_difference 'Order.count' do
+      @order.cancel
+    end
+  end
+
   test 'payment_verified? returns false if payment not received by Stripe' do
     @order = orders(:unpaid)
     assert_equal false, @order.payment_verified?

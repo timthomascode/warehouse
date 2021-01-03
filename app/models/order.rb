@@ -11,9 +11,10 @@ class Order < ApplicationRecord
 
   def cancel
     #TODO: if checkout session payment intent is valid, cancel the payment intent through stripe api.
-    #TODO: verify that order is not already paid. do not allow for paid orders to be canceled.
-    self.ware.update!(status: :available)
-    self.delete
+    if paid == false
+      self.ware.update!(status: :available)
+      self.delete
+    end
   end
   
   def payment_verified?
@@ -23,6 +24,8 @@ class Order < ApplicationRecord
       false
     end
   end
+
+  private 
 
   def mark_paid
     self.update!(paid: true)
