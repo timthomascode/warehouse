@@ -6,13 +6,14 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   include ActiveJob::TestHelper
 
   setup do
-    @order = orders(:one)
+    @order = orders(:paid)
     @admin = admins(:one)
+    @available_ware = wares(:available)
   end
 
   test 'start should save a new order with a ware' do
     assert_difference ->{ available_ware_count } => -1, ->{ order_count } => 1 do
-      get start_order_url, params: { ware_id: wares(:silver_ring).id }
+      get start_order_url, params: { ware_id: @available_ware.id }
     end
 
     assert_select 'h3', "New Order"
@@ -20,20 +21,20 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   test 'start enqueues a job' do
     assert_enqueued_jobs 0
-    get start_order_url, params: { ware_id: wares(:silver_ring).id }
+    get start_order_url, params: { ware_id: @available_ware.id }
     assert_enqueued_jobs 1
   end
 
   test 'continue should never create a new order' do
-    get start_order_url, params: { ware_id: wares(:silver_ring).id }
+    get start_order_url, params: { ware_id: @available_ware.id }
     assert_no_difference 'order_count' do
       post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Bob", last_name: "Evans", street_address: "123 Breakfast Lane", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
     end
   end
 
   test 'continue should save a valid order' do
-    test_ware_id = wares(:silver_ring).id
-    get start_order_url params: { ware_id: wares(:silver_ring).id }
+    test_ware_id = @available_ware.id
+    get start_order_url params: { ware_id: @available_ware.id }
 
     test_order = Order.where(ware_id: test_ware_id).first
     assert_equal "Silver Ring", test_order.ware.name
@@ -47,10 +48,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'continue redirects to start if order is not valid' do
-    get start_order_url params: { ware_id: wares(:silver_ring).id }
+    get start_order_url params: { ware_id: @available_ware.id }
     post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Missing", last_name: "Street_Address", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
 
-    assert_redirected_to start_order_url(ware_id: wares(:silver_ring).id) 
+    assert_redirected_to start_order_url(ware_id: @available_ware.id) 
   end
 
   test 'success should complete order' do
@@ -98,20 +99,20 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'start changes available ware to processing' do
-    assert_equal false, wares(:silver_ring).processing?
-    get start_order_url, params: { ware_id: wares(:silver_ring).id }
+    assert_equal false, @available_ware.processing?
+    get start_order_url, params: { ware_id: @available_ware.id }
 
-    result = Ware.find(wares(:silver_ring).id)
+    result = Ware.find(@available_ware.id)
     assert_equal true, result.processing?
   end
 
   test 'start stores ware ID in the session' do
-    get start_order_url, params: { ware_id: wares(:silver_ring).id }
-    assert_equal wares(:silver_ring).id, session[:ware_id]
+    get start_order_url, params: { ware_id: @available_ware.id }
+    assert_equal @available_ware.id, session[:ware_id]
   end
 
   test 'start broadcasts to warehouse stream' do
-    get start_order_url, params: { ware_id: wares(:silver_ring).id }
+    get start_order_url, params: { ware_id: @available_ware.id }
     assert_broadcasts('warehouse', 1)
   end
 

@@ -1,24 +1,24 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-magical_amulet:
+sold:
   name: Magical Amulet
   description: A magical amulet, believed to give good luck.
   price_cents: 99999
   status: sold
 
-silver_ring:
+available:
   name: Silver Ring
   description: A size 8 silver ring, unpolished. Hand-crafted.
   price_cents: 999
   status: available
 
-steel_dagger:
+processing:
   name: Steel Dagger
   description: Sharp and pointy!
   price_cents: 350
   status: processing
 
-walking_stick:
+in_stripe_order:
   name: Walking Stick
   description: Made from a White Oak tree, hand-carved, with leather handle.
   price_cents: 10000

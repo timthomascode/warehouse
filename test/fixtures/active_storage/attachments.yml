@@ -1,19 +1,19 @@
 magical_amulet:
   name: image
-  record: magical_amulet (Ware)
+  record: sold (Ware)
   blob: test_image_blob
 
 silver_ring:
   name: image
-  record: silver_ring (Ware)
+  record: available (Ware)
   blob: test_image_blob
 
 steel_dagger:
   name: image
-  record: steel_dagger (Ware)
+  record: processing (Ware)
   blob: test_image_blob
 
 walking_stick:
   name: image
-  record: walking_stick (Ware)
+  record: in_stripe_order (Ware)
   blob: test_image_blob

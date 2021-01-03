@@ -1,7 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  ware: magical_amulet
+paid:
+  ware: sold
   first_name: Tim
   last_name: Thomas
   street_address: 123 Ravenshire Ct
@@ -13,7 +13,7 @@ one:
   checkout_session: "fake-session-for-order-one"
 
 unpaid:
-  ware: steel_dagger
+  ware: processing
   first_name: Tim
   last_name: Thomas
   street_address: 123 Ravenshire Ct
@@ -25,7 +25,7 @@ unpaid:
   checkout_session: "fake-session-for-order-two"
 
 stripe_test_order:
-  ware: walking_stick
+  ware: in_stripe_order
   first_name: Hello
   last_name: Stripe
   street_address: 456 Who Cares Ln

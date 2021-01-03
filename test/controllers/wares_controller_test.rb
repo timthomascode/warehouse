@@ -40,7 +40,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
   include ActionCable::TestHelper
 
   setup do
-    @ware = wares(:silver_ring)
+    @ware = wares(:available)
   end
 
   test "prevents unauthorized access" do
@@ -118,7 +118,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
   test "should destroy available ware" do
     sign_in admins(:one)
     assert_difference('Ware.count', -1) do
-      delete ware_url(wares(:silver_ring))
+      delete ware_url(wares(:available))
     end
 
     assert_redirected_to wares_url
@@ -128,7 +128,7 @@ class WaresControllerTest < ActionDispatch::IntegrationTest
   test "should not destroy sold and processing wares" do
     sign_in admins(:one)
     assert_difference('Ware.count', 0) do
-      delete ware_url(wares(:magical_amulet)) 
+      delete ware_url(wares(:sold)) 
     end
 
     assert_equal @controller.notice, "Ware cannot be deleted."

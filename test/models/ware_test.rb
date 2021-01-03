@@ -6,28 +6,30 @@ class WareTest < ActiveSupport::TestCase
     assert_equal "$11.55", ware.price
   end
 
-  test 'mark_sold updates status to sold' do
-    @ware = wares(:silver_ring)
-    assert_equal 1, sold_ware_count
-    assert_equal false, @ware.sold?
+  setup do
+    @available_ware = wares(:available)
+  end
 
-    @ware.mark_sold
+  test 'mark_sold updates status to sold' do
+    assert_equal 1, sold_ware_count
+    assert_equal false, @available_ware.sold?
+
+    @available_ware.mark_sold
     assert_equal 2, sold_ware_count
-    assert_equal true, @ware.sold?
+    assert_equal true, @available_ware.sold?
   end
 
   test 'process updates status of an available ware, returns true' do
-    @ware = wares(:silver_ring)
-    assert_equal true, @ware.available?
+    assert_equal true, @available_ware.available?
 
-    assert_equal true, @ware.process
+    assert_equal true, @available_ware.process
 
-    assert_equal false, @ware.available?
-    assert_equal true, @ware.processing?
+    assert_equal false, @available_ware.available?
+    assert_equal true, @available_ware.processing?
   end
 
   test 'process returns nil if ware is not available' do
-    @ware = wares(:magical_amulet)
+    @ware = wares(:sold)
     assert_equal false, @ware.available?
 
     assert_nil @ware.process
@@ -36,14 +38,14 @@ class WareTest < ActiveSupport::TestCase
   end
 
   test 'unprocess updates status of a processing ware, returns true' do
-    @ware = wares(:steel_dagger)
+    @ware = wares(:processing)
     assert_equal false, @ware.available?
     assert_equal true, @ware.unprocess
     assert_equal true, @ware.available?
   end
 
   test 'unprocess returns nil if ware is not processing' do
-    @ware = wares(:magical_amulet)
+    @ware = wares(:sold)
     assert_equal false, @ware.processing?
     assert_nil @ware.unprocess
     assert_equal false, @ware.available?
