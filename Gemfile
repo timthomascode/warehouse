@@ -37,6 +37,8 @@ gem 'stripe-rails'
 
 gem 'google-cloud-storage', '~> 1.11', require: false
 
+gem 'pry', '~> 0.13.1'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
