@@ -10,7 +10,7 @@ paid:
   zip_code: 70007
   email: test@example.com
   paid: true
-  checkout_session: "fake-session-for-order-one"
+  stripe_session_id: "fake-session-for-order-one"
 
 unpaid:
   ware: processing
@@ -22,7 +22,7 @@ unpaid:
   zip_code: 70007
   email: test@example.com
   paid: false
-  checkout_session: "fake-session-for-order-two"
+  stripe_session_id: "fake-session-for-order-two"
 
 stripe_test_order:
   ware: in_stripe_order
@@ -34,4 +34,4 @@ stripe_test_order:
   zip_code: 12345
   email: test@example.com
   paid: false
-  checkout_session: "cs_test_a1nqL1rnu2KUDOpWR5vndI4Yks3hcANF2k1LGAcQ7mCW6SsbAzO2srLtDR"
+  stripe_session_id: "cs_test_a1nqL1rnu2KUDOpWR5vndI4Yks3hcANF2k1LGAcQ7mCW6SsbAzO2srLtDR"

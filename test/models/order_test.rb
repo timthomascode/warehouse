@@ -20,6 +20,7 @@ class OrderTest < ActiveSupport::TestCase
 
   test 'cancel deletes order and marks ware available' do
     @order = orders(:unpaid)
+    StripeAdapter.expects(:cancel_payment_intent_for).with(@order)
     assert_difference ->{ order_count } => -1, ->{ available_ware_count } => 1 do
       @order.cancel
     end
@@ -34,11 +35,13 @@ class OrderTest < ActiveSupport::TestCase
 
   test 'payment_verified? returns false if payment not received by Stripe' do
     @order = orders(:unpaid)
+    StripeAdapter.expects(:verify_payment_for).with(@order).returns(false)
     assert_equal false, @order.payment_verified?
   end
 
   test 'payment_verified? returns true if payment receieved by Stripe' do
     @order = orders(:stripe_test_order)
+    StripeAdapter.expects(:verify_payment_for).with(@order).returns(true)
     assert_equal true, @order.payment_verified?
   end
 end

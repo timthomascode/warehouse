@@ -27,6 +27,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   test 'continue should never create a new order' do
     get start_order_url, params: { ware_id: @available_ware.id }
+    StripeAdapter.expects(:new_checkout_session_for).returns({ "id": "test_session_id"})
     assert_no_difference 'order_count' do
       post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Bob", last_name: "Evans", street_address: "123 Breakfast Lane", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
     end
@@ -40,6 +41,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Silver Ring", test_order.ware.name
     assert_equal false, test_order.valid?
 
+    StripeAdapter.expects(:new_checkout_session_for).returns({ "id": "test_session_id"})
     post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Bob", last_name: "Evans", street_address: "123 Breakfast Lane", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
 
     test_order.reload
@@ -56,9 +58,9 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   test 'success should complete order' do
     test_order = orders(:stripe_test_order)
-
+    StripeAdapter.expects(:verify_payment_for).with(test_order).returns(true) 
     assert_difference ->{ paid_order_count } => 1, ->{ sold_ware_count } => 1 do
-      get success_url, params: { session_id: test_order.checkout_session }
+      get success_url, params: { session_id: test_order.stripe_session_id }
     end
 
     assert_response :success
@@ -67,22 +69,24 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test 'success sends email' do
     test_order = orders(:stripe_test_order)
 
+    StripeAdapter.expects(:verify_payment_for).with(test_order).returns(true) 
     assert_emails 1 do
-      get success_url, params: { session_id: test_order.checkout_session }
+      get success_url, params: { session_id: test_order.stripe_session_id }
     end
   end
 
   test 'success redirects to cancel if payment not verified' do
     test_order = orders(:unpaid)
-    get success_url, params: { session_id: test_order.checkout_session }
-    assert_redirected_to cancel_url(checkout_session: test_order.checkout_session)
+    StripeAdapter.expects(:verify_payment_for).with(test_order).returns(false) 
+    get success_url, params: { session_id: test_order.stripe_session_id }
+    assert_redirected_to cancel_url(stripe_session_id: test_order.stripe_session_id)
   end
 
   test "cancel should restart order" do
     test_order = orders(:unpaid)
-
+    StripeAdapter.expects(:cancel_payment_intent_for).with(test_order)
     assert_difference ->{ order_count } => -1, ->{ available_ware_count } => 1 do
-      get cancel_url, params: { session_id: test_order.checkout_session }
+      get cancel_url, params: { session_id: test_order.stripe_session_id }
     end
 
     assert_response :redirect

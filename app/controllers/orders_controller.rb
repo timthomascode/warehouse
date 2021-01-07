@@ -38,7 +38,7 @@ class OrdersController < ApplicationController
     @order.email = filtered_params[:email]
 
     if @order.valid?
-      @order.checkout_session = create_checkout_session(@order)
+      @order.stripe_session_id = StripeAdapter.new_checkout_session_for(@order)["id"]
       @order.save
     else
       redirect_to start_order_url(ware_id: @order.ware.id), notice: "Missing order fields"
@@ -50,16 +50,16 @@ class OrdersController < ApplicationController
   end
   
   def success
-    @order = Order.find_by(checkout_session: params[:session_id])
+    @order = Order.find_by(stripe_session_id: params[:session_id])
     if @order.complete
       OrderMailer.with(order_id: @order.id).receipt.deliver_later
     else
-      redirect_to cancel_url(checkout_session: @order.checkout_session)
+      redirect_to cancel_url(stripe_session_id: @order.stripe_session_id)
     end
   end  
 
   def cancel
-    @order = Order.find_by(checkout_session: params[:session_id])
+    @order = Order.find_by(stripe_session_id: params[:session_id])
     ware_id = @order.ware_id
     @order.cancel
     redirect_to start_order_url(ware_id: ware_id)
@@ -71,31 +71,6 @@ class OrdersController < ApplicationController
       session[:ware_id] = ware.id
     end
     
-    def create_checkout_session(order) 
-      checkout_session = Stripe::Checkout::Session.create({
-        customer_email: order.email,
-        payment_method_types: ['card'],
-        line_items: [{
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: order.ware.name,
-              description: order.ware.description,
-              # images: [url_for(order.ware.image)],
-            },
-            unit_amount: order.ware.price_cents,
-          },
-          quantity: 1,
-        }],
-        mode: 'payment',
-        success_url: "#{ success_url }?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "#{ cancel_url }?session_id={CHECKOUT_SESSION_ID}",
-      })
-
-      return checkout_session.id
-      
-    end
-
     # Use callbacks to share common setup or constraints between actions.
     def set_order
       @order = Order.find(params[:id])

@@ -12,17 +12,14 @@ class Order < ApplicationRecord
   def cancel
     #TODO: if checkout session payment intent is valid, cancel the payment intent through stripe api.
     if paid == false
+      StripeAdapter.cancel_payment_intent_for(self)
       self.ware.update!(status: :available)
       self.delete
     end
   end
   
   def payment_verified?
-    begin
-      Stripe::Checkout::Session.retrieve(checkout_session).payment_status == "paid"
-    rescue
-      false
-    end
+    StripeAdapter.verify_payment_for(self)
   end
 
   private 

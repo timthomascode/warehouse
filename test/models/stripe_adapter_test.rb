@@ -37,8 +37,8 @@ class StripeAdapterTest < ActiveSupport::TestCase
     assert_equal false, StripeAdapter.verify_payment_for(@unpaid_order)
   end
 
-  test 'verify_payment_for(order) returns false if checkout_session is invalid' do
-    invalid_session_order = Order.new(checkout_session: "not a valid checkout session id") 
+  test 'verify_payment_for(order) returns false if stripe_session_id is invalid' do
+    invalid_session_order = Order.new(stripe_session_id: "not a valid checkout session id") 
     Stripe::Checkout::Session.expects(:retrieve).raises(Stripe::InvalidRequestError)
     assert_equal false, StripeAdapter.verify_payment_for(invalid_session_order)
   end
