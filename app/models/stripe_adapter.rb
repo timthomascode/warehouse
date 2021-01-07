@@ -2,7 +2,7 @@ class StripeAdapter
 
   def self.verify_payment_for(order)
     begin
-      Stripe::Checkout::Session.retrieve(order.checkout_session).payment_status == "paid"
+      Stripe::Checkout::Session.retrieve(order.stripe_session_id).payment_status == "paid"
     rescue
       false
     end
@@ -25,20 +25,38 @@ class StripeAdapter
           quantity: 1,
         }],
         mode: 'payment',
-        success_url: "/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "/cancel?session_id={CHECKOUT_SESSION_ID}",
+        success_url: "#{ success_url }?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: "#{ cancel_url }?session_id={CHECKOUT_SESSION_ID}",
       })
-    rescue
+    rescue Exception => e
       nil
     end
   end
 
   def self.cancel_payment_intent_for(order)
     begin
-      checkout_session = Stripe::Checkout::Session.retrieve(order.checkout_session)
+      checkout_session = Stripe::Checkout::Session.retrieve(order.stripe_session_id)
       Stripe::PaymentIntent.cancel(checkout_session["payment_intent"])
     rescue
       nil
+    end
+  end
+
+  private
+
+  def self.success_url
+    if Rails.env.production?
+      "https://warehouse.timthomas.dev/success"
+    else
+      "http://localhost:3000/success"
+    end
+  end
+
+  def self.cancel_url
+    if Rails.env.production?
+      "https://warehouse.timthomas.dev/cancel"
+    else
+      "http://localhost:3000/cancel"
     end
   end
 end
