@@ -3,7 +3,6 @@ require "application_system_test_case"
 class OrdersTest < ApplicationSystemTestCase
   include Devise::Test::IntegrationHelpers
   setup do
-    @order = orders(:one)
     @admin = admins(:one)
   end
 
@@ -44,12 +43,12 @@ class OrdersTest < ApplicationSystemTestCase
     assert_text "Capybara, System Test 12345"
     assert_text "test@example.com"
     assert_text "Silver Ring"
-    assert_text wares(:silver_ring).description
-    assert_text wares(:silver_ring).price
+    assert_text wares(:available).description
+    assert_text wares(:available).price
     
   end
   
-  test "cancellation from Stripe page redirects to warehouse index" do
+  test "cancellation from Stripe page redirects to new order page" do
 
     visit warehouse_index_url
     click_on "Buy now", match: :first
@@ -69,7 +68,7 @@ class OrdersTest < ApplicationSystemTestCase
     assert_text "Pay with card", wait: 5 
     click_on "Back"
 
-    assert_text "Warehouse"
+    assert_text "New Order"
     assert_text "Silver Ring"
   end
 

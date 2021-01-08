@@ -47,16 +47,20 @@ class StripeAdapter
   def self.success_url
     if Rails.env.production?
       "https://warehouse.timthomas.dev/success"
-    else
+    elsif Rails.env.development?
       "http://localhost:3000/success"
+    elsif Rails.env.test?
+      "http://localhost:33333/success"
     end
   end
 
   def self.cancel_url
     if Rails.env.production?
       "https://warehouse.timthomas.dev/cancel"
-    else
+    elsif Rails.env.development?
       "http://localhost:3000/cancel"
+    elsif Rails.env.test? 
+      "http://localhost:33333/cancel"
     end
   end
 end
