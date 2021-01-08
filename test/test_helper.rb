@@ -3,6 +3,8 @@ require_relative '../config/environment'
 require 'rails/test_help'
 require 'mocha/minitest'
 
+Capybara.server_port = '33333'
+
 class ActiveSupport::TestCase
   # Run tests in parallel with specified workers
   # parallelize(workers: :number_of_processors)

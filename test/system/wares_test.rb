@@ -4,7 +4,7 @@ class WaresTest < ApplicationSystemTestCase
   include Devise::Test::IntegrationHelpers
 
   setup do
-    @ware = wares(:magical_amulet)
+    @ware = wares(:sold)
     sign_in admins(:one)
   end
 
@@ -42,9 +42,9 @@ class WaresTest < ApplicationSystemTestCase
 
   test "destroying a Ware" do
     visit wares_url
-    silver_ring_id = wares(:silver_ring).id
+    available_ware = wares(:available)
     page.accept_confirm do
-      find_by_id("#{ silver_ring_id }").click_on "Destroy"
+      find_by_id("#{ available_ware.id }").click_on "Destroy"
     end
 
     assert_text "Ware was successfully destroyed"

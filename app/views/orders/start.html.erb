@@ -9,7 +9,6 @@
     <h4><%= @order.ware.price %></h4>
   </div>
 </div>
-#
 <div class="row border rounded-sm p-3">
   <%= form_with(model: @order, url: continue_order_path, method: :post, local: true, class: "col-12 p-0") do |form| %>
     <% if @order.errors.any? %>
