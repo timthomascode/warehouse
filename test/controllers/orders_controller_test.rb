@@ -19,10 +19,15 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_select 'h3', "New Order"
   end
 
-  test 'start enqueues a job' do
+  test 'start enqueues job to cancel order' do
+
     assert_enqueued_jobs 0
     get start_order_url, params: { ware_id: @available_ware.id }
     assert_enqueued_jobs 1
+
+    assert_difference 'order_count', -1 do
+      perform_enqueued_jobs
+    end
   end
 
   test 'continue should never create a new order' do
