@@ -1,4 +1,5 @@
 class StripeAdapter
+  include ActionController::UrlFor
 
   def self.verify_payment_for(order)
     begin
@@ -8,7 +9,7 @@ class StripeAdapter
     end
   end
 
-  def self.new_checkout_session_for(order) 
+  def self.new_checkout_session_for(order, url1, url2) 
     begin
       Stripe::Checkout::Session.create({
         customer_email: order.email,
@@ -25,8 +26,8 @@ class StripeAdapter
           quantity: 1,
         }],
         mode: 'payment',
-        success_url: "#{ success_url }?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "#{ cancel_url }?session_id={CHECKOUT_SESSION_ID}",
+        success_url: "#{ url1 }?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: "#{ url2 }?session_id={CHECKOUT_SESSION_ID}",
       })
     rescue Exception => e
       nil
@@ -39,28 +40,6 @@ class StripeAdapter
       Stripe::PaymentIntent.cancel(checkout_session["payment_intent"])
     rescue
       nil
-    end
-  end
-
-  private
-
-  def self.success_url
-    if Rails.env.production?
-      "https://warehouse.timthomas.dev/success"
-    elsif Rails.env.development?
-      "http://localhost:3000/success"
-    elsif Rails.env.test?
-      "http://localhost:33333/success"
-    end
-  end
-
-  def self.cancel_url
-    if Rails.env.production?
-      "https://warehouse.timthomas.dev/cancel"
-    elsif Rails.env.development?
-      "http://localhost:3000/cancel"
-    elsif Rails.env.test? 
-      "http://localhost:33333/cancel"
     end
   end
 end

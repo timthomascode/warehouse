@@ -38,7 +38,7 @@ class OrdersController < ApplicationController
     @order.email = filtered_params[:email]
 
     if @order.valid?
-      @order.stripe_session_id = StripeAdapter.new_checkout_session_for(@order)["id"]
+      @order.stripe_session_id = StripeAdapter.new_checkout_session_for(@order, success_url, cancel_url)["id"]
       @order.save
     else
       redirect_to start_order_url(ware_id: @order.ware.id), notice: "Missing order fields"
@@ -64,7 +64,7 @@ class OrdersController < ApplicationController
     @order.cancel
     redirect_to start_order_url(ware_id: ware_id)
   end
-
+  
   private
 
     def store_ware_in_session(ware)

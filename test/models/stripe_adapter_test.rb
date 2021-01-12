@@ -45,17 +45,17 @@ class StripeAdapterTest < ActiveSupport::TestCase
 
   test 'new_checkout_session_for(order) returns a checkout session' do
     Stripe::Checkout::Session.expects(:create).returns(Unpaid_Checkout_Session)
-    assert_equal Unpaid_Checkout_Session, StripeAdapter.new_checkout_session_for(@unpaid_order)
+    assert_equal Unpaid_Checkout_Session, StripeAdapter.new_checkout_session_for(@unpaid_order, "http://localhost:33333/success", "http://localhost:33333/cancel")
   end
 
   test 'new_checkout_session_for(order) returns nil if API error' do
     Stripe::Checkout::Session.expects(:create).raises(Stripe::InvalidRequestError)
-    assert_nil StripeAdapter.new_checkout_session_for(@unpaid_order)
+    assert_nil StripeAdapter.new_checkout_session_for(@unpaid_order, 'http://localhost:33333/success', 'http://localhost:33333/cancel')
   end
 
   test 'new_checkout_session_for(order) returns nil if order has incomplete fields' do
     incomplete_order = Order.new
-    assert_nil StripeAdapter.new_checkout_session_for(incomplete_order)
+    assert_nil StripeAdapter.new_checkout_session_for(incomplete_order, 'http://localhost:33333/success', 'http://localhost:33333/cancel')
   end
  
   test 'cancel_payment_intent_for(order) returns Stripe payment_intent object' do
