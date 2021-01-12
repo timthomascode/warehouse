@@ -116,7 +116,7 @@ Rails.application.configure do
     :password => Rails.application.credentials.sendgrind_pass,
     :domain => 'timthomas.dev',
     :address => 'smtp.sendgrid.net',
-    :port => 587,
+    :port => 465,
     :authentication => :plain,
     :enable_starttls_auto => true
   }
