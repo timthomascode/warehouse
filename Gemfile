@@ -37,6 +37,7 @@ gem 'stripe-rails'
 
 gem 'google-cloud-storage', '~> 1.11', require: false
 gem 'redis'
+gem 'sidekiq'
 
 gem 'pry', '~> 0.13.1'
 gem 'pry-byebug'
