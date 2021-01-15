@@ -34,7 +34,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end
   end
  
-  test 'what happens when order already paid' do
+  test 'continue does not change completed order' do
     paid_order = orders(:paid)
     post continue_order_url, params: { order: { order_id: paid_order.id, first_name: "Change", last_name: "Names", street_address: "555 This Should", city: "Not", state: "Happen", zip_code: "911", email: "something_wrong@example.com" } }
     assert_redirected_to root_url, notice: "Existing order. Access denied"
