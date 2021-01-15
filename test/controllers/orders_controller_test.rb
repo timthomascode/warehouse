@@ -11,9 +11,13 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     @available_ware = wares(:available)
   end
 
+  def start_order_with_available_ware
+    get start_order_url, params: { ware_id: @available_ware.id }
+  end
+
   test 'start should save a new order with a ware' do
     assert_difference ->{ available_ware_count } => -1, ->{ order_count } => 1 do
-      get start_order_url, params: { ware_id: @available_ware.id }
+      start_order_with_available_ware
     end
 
     assert_select 'h3', "New Order"
@@ -22,22 +26,29 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test 'start enqueues job to cancel order' do
 
     assert_enqueued_jobs 0
-    get start_order_url, params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
     assert_enqueued_jobs 1
 
     assert_difference 'order_count', -1 do
       perform_enqueued_jobs
     end
   end
-  
+ 
+  test 'what happens when order already paid' do
+    paid_order = orders(:paid)
+    post continue_order_url, params: { order: { order_id: paid_order.id, first_name: "Change", last_name: "Names", street_address: "555 This Should", city: "Not", state: "Happen", zip_code: "911", email: "something_wrong@example.com" } }
+    assert_redirected_to root_url, notice: "Existing order. Access denied"
+    assert_equal "Tim", paid_order.reload.first_name
+  end
+
   test 'continue redirects to root if order cant be found' do
-    get start_order_url, params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
     post continue_order_url, params: { order: { order_id: "force error" } }
     assert_redirected_to root_url
   end
 
   test 'continue redirects to root if order times out' do
-    get start_order_url, params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
     order = Order.find_by(ware_id: @available_ware.id)
     assert order
     perform_enqueued_jobs
@@ -46,7 +57,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
   
   test 'continue should never create a new order' do
-    get start_order_url, params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
     StripeAdapter.expects(:new_checkout_session_for).returns({ "id": "test_session_id"})
     assert_no_difference 'order_count' do
       post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Bob", last_name: "Evans", street_address: "123 Breakfast Lane", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
@@ -55,7 +66,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   test 'continue should save a valid order' do
     test_ware_id = @available_ware.id
-    get start_order_url params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
 
     test_order = Order.where(ware_id: test_ware_id).first
     assert_equal "Silver Ring", test_order.ware.name
@@ -70,7 +81,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'continue redirects to start if order is not valid' do
-    get start_order_url params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
     post continue_order_url, params: { order: { order_id: Order.last.id, first_name: "Missing", last_name: "Street_Address", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
 
     assert_redirected_to start_order_url(ware_id: @available_ware.id) 
@@ -124,19 +135,19 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   test 'start changes available ware to processing' do
     assert_equal false, @available_ware.processing?
-    get start_order_url, params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
 
     result = Ware.find(@available_ware.id)
     assert_equal true, result.processing?
   end
 
   test 'start stores ware ID in the session' do
-    get start_order_url, params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
     assert_equal @available_ware.id, session[:ware_id]
   end
 
   test 'start broadcasts to warehouse stream' do
-    get start_order_url, params: { ware_id: @available_ware.id }
+    start_order_with_available_ware
     assert_broadcasts('warehouse', 1)
   end
 

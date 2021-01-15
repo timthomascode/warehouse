@@ -30,7 +30,12 @@ class OrdersController < ApplicationController
     begin
       @order = Order.find(filtered_params[:order_id])
     rescue 
-      redirect_to root_url, notice: "Order timed out"
+      redirect_to root_url, notice: "Order no longer exists"
+      return
+    end
+
+    if @order.paid?
+      redirect_to root_url, notice: "Existing order. Access denied."
       return
     end
 
