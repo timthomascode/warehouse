@@ -29,7 +29,22 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
       perform_enqueued_jobs
     end
   end
+  
+  test 'continue redirects to root if order cant be found' do
+    get start_order_url, params: { ware_id: @available_ware.id }
+    post continue_order_url, params: { order: { order_id: "force error" } }
+    assert_redirected_to root_url
+  end
 
+  test 'continue redirects to root if order times out' do
+    get start_order_url, params: { ware_id: @available_ware.id }
+    order = Order.find_by(ware_id: @available_ware.id)
+    assert order
+    perform_enqueued_jobs
+    post continue_order_url, params: { order: { order_id: order.id, first_name: "Bob", last_name: "Evans", street_address: "123 Breakfast Lane", city: "Bacon", state: "Indiana", zip_code: "12345", email: "bob@example.com" } }
+    assert_redirected_to root_url
+  end
+  
   test 'continue should never create a new order' do
     get start_order_url, params: { ware_id: @available_ware.id }
     StripeAdapter.expects(:new_checkout_session_for).returns({ "id": "test_session_id"})

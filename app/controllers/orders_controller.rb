@@ -27,7 +27,13 @@ class OrdersController < ApplicationController
   end
 
   def continue
-    @order = Order.find(filtered_params[:order_id])
+    begin
+      @order = Order.find(filtered_params[:order_id])
+    rescue 
+      redirect_to root_url, notice: "Order timed out"
+      return
+    end
+
     @order.first_name = filtered_params[:first_name]
     @order.last_name = filtered_params[:last_name]
     @order.street_address = filtered_params[:street_address]
