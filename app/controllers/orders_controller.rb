@@ -20,6 +20,7 @@ class OrdersController < ApplicationController
       broadcast_wares_to_warehouse
       @order = Order.new(ware: ware)
       @order.save(validate: false)
+      session[:order_id] = @order.id
       OrderTimeoutJob.set(wait: 15.minutes).perform_later(@order.id)
     else
       redirect_to root_url, notice: "Ware no longer available"
@@ -28,7 +29,7 @@ class OrdersController < ApplicationController
 
   def continue
     begin
-      @order = Order.find(filtered_params[:order_id])
+      @order = Order.find(session[:order_id])
     rescue 
       redirect_to root_url, notice: "Order no longer exists"
       return
@@ -63,6 +64,7 @@ class OrdersController < ApplicationController
   def success
     @order = Order.find_by(stripe_session_id: params[:session_id])
     if @order.complete
+      session.delete(:order_id)
       OrderMailer.with(order_id: @order.id).receipt.deliver_later
     else
       redirect_to cancel_url(stripe_session_id: @order.stripe_session_id)
@@ -72,6 +74,7 @@ class OrdersController < ApplicationController
   def cancel
     @order = Order.find_by(stripe_session_id: params[:session_id])
     ware_id = @order.ware_id
+    session.delete(:order_id)
     @order.cancel
     redirect_to start_order_url(ware_id: ware_id)
   end
@@ -92,6 +95,6 @@ class OrdersController < ApplicationController
       params.require(:order).permit(:ware_id, :first_name, :last_name, :street_address, :apt_num, :city, :state, :zip_code, :email)
     end
     def filtered_params
-      params.require(:order).permit(:order_id, :first_name, :last_name, :street_address, :apt_num, :city, :state, :zip_code, :email)
+      params.require(:order).permit(:first_name, :last_name, :street_address, :apt_num, :city, :state, :zip_code, :email)
     end
 end

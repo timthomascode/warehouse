@@ -11,6 +11,7 @@ class WarehouseController < ApplicationController
       ware = Ware.find(session[:ware_id])
       broadcast_wares_to_warehouse if ware.unprocess
       session.delete(:ware_id)
+      session.delete(:order_id)
     end
   end
 end

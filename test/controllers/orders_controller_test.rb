@@ -41,10 +41,12 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Tim", paid_order.reload.first_name
   end
 
-  test 'continue redirects to root if order cant be found' do
-    start_order_with_available_ware
-    post continue_order_url, params: { order: { order_id: "force error" } }
+  test 'order must be set by start, before it can continue' do
+    post continue_order_url
     assert_redirected_to root_url
+    start_order_with_available_ware
+    post continue_order_url, params: { order: { first_name: "Test", last_name: "Test", street_address: "123 Test Lane", city: "Test", state: "Hello", zip_code: "12345", email: "test@example.com" } }
+    assert_response :success
   end
 
   test 'continue redirects to root if order times out' do
