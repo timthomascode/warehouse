@@ -78,4 +78,4 @@
   <% end %>
 </div>
 
-<%= link_to 'Store Home', warehouse_index_path, data: { confirm: "Leaving this page will cancel your order and return #{ @order.ware.name } to the storefront" } %>
+<%= link_to 'Store Home', root_path, data: { confirm: "Leaving this page will cancel your order and return #{ @order.ware.name } to the storefront" } %>
