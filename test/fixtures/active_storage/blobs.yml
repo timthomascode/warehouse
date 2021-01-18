@@ -1,6 +1,7 @@
 test_image_blob:
   key: 123456789
   filename: test.png
+  service_name: :test
   content_type: image/png
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: <%= File.size('tmp/storage/12/34/123456789') %>
